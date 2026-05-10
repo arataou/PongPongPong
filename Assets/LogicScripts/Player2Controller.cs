@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class Player2Controller : PlayerBase
 {
+    public override int PlayerIndex => 2;
+
     protected override Vector2 ReadInput()
     {
         float h = 0f, v = 0f;
