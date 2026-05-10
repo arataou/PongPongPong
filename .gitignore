@@ -11,3 +11,6 @@
 *.sln
 *.user
 .DS_Store
+
+# Claude Code project metadata
+.claude/
