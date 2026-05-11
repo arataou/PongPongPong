@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class StateRouletteController : MonoBehaviour
 {
-    [SerializeField] float interval = 5f;
+    [SerializeField] float interval = 1f;
 
     public static StateRouletteController Instance { get; private set; }
     public float TimeUntilNext => timer;

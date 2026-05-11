@@ -28,6 +28,13 @@ public class EndScreen : MonoBehaviour
             MatchManager.Instance.OnMatchEnded -= HandleEnd;
     }
 
+    void Update()
+    {
+        if (MatchManager.Instance == null) return;
+        if (MatchManager.Instance.CurrentOutcome == MatchManager.Outcome.Ongoing) return;
+        if (Input.GetKeyDown(KeyCode.R)) Restart();
+    }
+
     void HandleEnd(MatchManager.Outcome o)
     {
         if (panel != null) panel.SetActive(true);
