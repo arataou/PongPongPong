@@ -43,10 +43,15 @@ public class EndScreen : MonoBehaviour
         {
             switch (o)
             {
-                case MatchManager.Outcome.P1Wins: resultText.text = "P1 胜"; break;
-                case MatchManager.Outcome.P2Wins: resultText.text = "P2 胜"; break;
-                case MatchManager.Outcome.Draw:   resultText.text = "平局";  break;
-                default:                           resultText.text = "";       break;
+                case MatchManager.Outcome.Win:
+                    resultText.text = $"P{MatchManager.Instance.WinningPlayerIndex} 胜";
+                    break;
+                case MatchManager.Outcome.Draw:
+                    resultText.text = "平局";
+                    break;
+                default:
+                    resultText.text = "";
+                    break;
             }
         }
     }

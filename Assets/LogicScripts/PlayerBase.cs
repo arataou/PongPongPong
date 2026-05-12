@@ -48,6 +48,7 @@ public abstract class PlayerBase : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
+        if (GameFeel.Instance != null) GameFeel.Instance.PlayDeath();
         MatchManager.UnregisterPlayer(this);
     }
 

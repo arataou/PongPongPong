@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class MatchManager : MonoBehaviour
 {
-    public enum Outcome { Ongoing, P1Wins, P2Wins, Draw }
+    public enum Outcome { Ongoing, Win, Draw }
 
     public static MatchManager Instance { get; private set; }
 
     static readonly List<PlayerBase> alivePlayers = new List<PlayerBase>();
 
-    public Outcome CurrentOutcome { get; private set; } = Outcome.Ongoing;
+    public Outcome CurrentOutcome    { get; private set; } = Outcome.Ongoing;
+    public int     WinningPlayerIndex { get; private set; }
     public event Action<Outcome> OnMatchEnded;
 
     void Awake()
@@ -19,6 +20,7 @@ public class MatchManager : MonoBehaviour
         Instance = this;
         alivePlayers.Clear();
         CurrentOutcome = Outcome.Ongoing;
+        WinningPlayerIndex = 0;
         Time.timeScale = 1f;
     }
 
@@ -38,21 +40,26 @@ public class MatchManager : MonoBehaviour
         if (CurrentOutcome != Outcome.Ongoing) return;
 
         if (alivePlayers.Count == 0)
-        {
-            EndMatch(Outcome.Draw);
-        }
+            BeginEnd(Outcome.Draw, 0);
         else if (alivePlayers.Count == 1)
-        {
-            int idx = alivePlayers[0].PlayerIndex;
-            EndMatch(idx == 1 ? Outcome.P1Wins : Outcome.P2Wins);
-        }
+            BeginEnd(Outcome.Win, alivePlayers[0].PlayerIndex);
     }
 
-    void EndMatch(Outcome o)
+    void BeginEnd(Outcome o, int winnerIdx)
     {
-        CurrentOutcome = o;
+        CurrentOutcome     = o;
+        WinningPlayerIndex = winnerIdx;
+
+        if (GameFeel.Instance != null)
+            GameFeel.Instance.PlayMatchEnd(FinalizeEnd);
+        else
+            FinalizeEnd();
+    }
+
+    void FinalizeEnd()
+    {
         Time.timeScale = 0f;
-        OnMatchEnded?.Invoke(o);
+        OnMatchEnded?.Invoke(CurrentOutcome);
     }
 
     public static IReadOnlyList<PlayerBase> AlivePlayers => alivePlayers;
