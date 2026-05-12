@@ -1,10 +1,10 @@
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class HudController : MonoBehaviour
 {
-    [SerializeField] Text stateLabel;
-    [SerializeField] Text aiLabel;
+    [SerializeField] TMP_Text stateLabel;
+    [SerializeField] TMP_Text aiLabel;
     [SerializeField] float warningThreshold = 3f;
     [SerializeField] Color normalColor  = Color.white;
     [SerializeField] Color warningColor = Color.red;

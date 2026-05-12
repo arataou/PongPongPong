@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -5,7 +6,7 @@ using UnityEngine.UI;
 public class EndScreen : MonoBehaviour
 {
     [SerializeField] GameObject panel;
-    [SerializeField] Text       resultText;
+    [SerializeField] TMP_Text   resultText;
     [SerializeField] Button     restartButton;
     [SerializeField] Button     quitButton;
 
