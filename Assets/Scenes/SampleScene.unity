@@ -2672,14 +2672,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1893617276}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e98d634ad7a7b3e48862d457f3fa42c5, type: 3}
+  m_Script: {fileID: 11500000, guid: b174ea8cdb45b1a4da45a89f4f6f2fb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stateLabel: {fileID: 0}
-  aiLabel: {fileID: 0}
-  warningThreshold: 3
-  normalColor: {r: 1, g: 1, b: 1, a: 1}
-  warningColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!4 &1893617278
 Transform:
   m_ObjectHideFlags: 0
