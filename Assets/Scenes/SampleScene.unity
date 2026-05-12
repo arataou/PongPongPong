@@ -1789,8 +1789,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "60 \u79D2\u540E AI"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6db448f9a85ee5848a718a6baffa2ce4, type: 2}
-  m_sharedMaterial: {fileID: 1478406024}
+  m_fontAsset: {fileID: 0}
+  m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2046,8 +2046,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "5 \u79D2\u540E\u5207\u6362\u72B6\u6001"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 6db448f9a85ee5848a718a6baffa2ce4, type: 2}
-  m_sharedMaterial: {fileID: 1478406024}
+  m_fontAsset: {fileID: 0}
+  m_sharedMaterial: {fileID: 0}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3257,8 +3257,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b174ea8cdb45b1a4da45a89f4f6f2fb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stateLabel: {fileID: 0}
-  aiLabel: {fileID: 0}
+  stateLabel: {fileID: 1368916033}
+  aiLabel: {fileID: 1272364142}
   warningThreshold: 3
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   warningColor: {r: 1, g: 0, b: 0, a: 1}
@@ -3344,7 +3344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 689480753}
-  resultText: {fileID: 0}
+  resultText: {fileID: 1530885344}
   restartButton: {fileID: 1868476762}
   quitButton: {fileID: 1529163288}
 --- !u!4 &1978570643

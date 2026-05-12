@@ -208,9 +208,9 @@ public static class TmpMigrator
         foreach (var root in roots)
         {
             foreach (var hud in root.GetComponentsInChildren<HudController>(true))
-                RewireHud(hud, root);
+                RewireHud(hud, roots);
             foreach (var es in root.GetComponentsInChildren<EndScreen>(true))
-                RewireEndScreen(es, root);
+                RewireEndScreen(es, roots);
         }
 
         EditorSceneManager.MarkSceneDirty(scene);
@@ -259,15 +259,15 @@ public static class TmpMigrator
         EditorUtility.SetDirty(go);
     }
 
-    static void RewireHud(HudController hud, GameObject root)
+    static void RewireHud(HudController hud, GameObject[] roots)
     {
         var so = new SerializedObject(hud);
 
-        var stateGo = FindDescendant(root, "StateLabel");
+        var stateGo = FindAcrossRoots(roots, "StateLabel");
         if (stateGo != null)
             so.FindProperty("stateLabel").objectReferenceValue = stateGo.GetComponent<TMP_Text>();
 
-        var hudGo = FindDescendant(root, "HUD");
+        var hudGo = FindAcrossRoots(roots, "HUD");
         if (hudGo != null)
         {
             foreach (var candidate in hudGo.GetComponentsInChildren<TMP_Text>(true))
@@ -282,13 +282,23 @@ public static class TmpMigrator
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
-    static void RewireEndScreen(EndScreen es, GameObject root)
+    static void RewireEndScreen(EndScreen es, GameObject[] roots)
     {
         var so = new SerializedObject(es);
-        var resultGo = FindDescendant(root, "ResultText");
+        var resultGo = FindAcrossRoots(roots, "ResultText");
         if (resultGo != null)
             so.FindProperty("resultText").objectReferenceValue = resultGo.GetComponent<TMP_Text>();
         so.ApplyModifiedPropertiesWithoutUndo();
+    }
+
+    static GameObject FindAcrossRoots(GameObject[] roots, string name)
+    {
+        foreach (var r in roots)
+        {
+            var found = FindDescendant(r, name);
+            if (found != null) return found;
+        }
+        return null;
     }
 
     static GameObject FindDescendant(GameObject root, string name)
