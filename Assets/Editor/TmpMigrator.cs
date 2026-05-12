@@ -102,9 +102,13 @@ public static class TmpMigrator
         else
         {
             fontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
-            EditorUtility.SetDirty(fontAsset);
             Debug.Log($"[TmpMigrator] 复用现有 Font Asset：{GeneratedAssetPath}。");
         }
+
+        EnsureSubAssets(fontAsset);
+        EditorUtility.SetDirty(fontAsset);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.ImportAsset(GeneratedAssetPath);
 
         var settings = TMP_Settings.instance;
         if (settings == null)
@@ -121,6 +125,52 @@ public static class TmpMigrator
         AssetDatabase.SaveAssets();
 
         Debug.Log("[TmpMigrator] 已把中文 Font Asset 设为 TMP 默认字体。现在可以点 [3. 迁移场景]。");
+    }
+
+    // 把 Atlas Texture 和 Material 作为 sub-asset 写进 .asset，否则推到 git 后队友拉下来 m_AtlasTextures 是 fileID:0
+    static void EnsureSubAssets(TMP_FontAsset fontAsset)
+    {
+        string path = AssetDatabase.GetAssetPath(fontAsset);
+
+        bool needNewTex =
+            fontAsset.atlasTextures == null ||
+            fontAsset.atlasTextures.Length == 0 ||
+            fontAsset.atlasTextures[0] == null;
+
+        if (needNewTex)
+        {
+            int w = fontAsset.atlasWidth  > 0 ? fontAsset.atlasWidth  : 1024;
+            int h = fontAsset.atlasHeight > 0 ? fontAsset.atlasHeight : 1024;
+            var tex = new Texture2D(w, h, TextureFormat.Alpha8, false, true);
+            tex.name = $"{fontAsset.name} Atlas";
+            fontAsset.atlasTextures = new[] { tex };
+            AssetDatabase.AddObjectToAsset(tex, fontAsset);
+            Debug.Log($"[TmpMigrator] 已补回 Atlas Texture sub-asset。");
+        }
+        else if (AssetDatabase.GetAssetPath(fontAsset.atlasTextures[0]) != path)
+        {
+            fontAsset.atlasTextures[0].name = $"{fontAsset.name} Atlas";
+            AssetDatabase.AddObjectToAsset(fontAsset.atlasTextures[0], fontAsset);
+            Debug.Log($"[TmpMigrator] 已把已有 Atlas Texture 转为 sub-asset。");
+        }
+
+        if (fontAsset.material == null)
+        {
+            var shader = Shader.Find("TextMeshPro/Distance Field");
+            if (shader == null) shader = Shader.Find("TMPro/Distance Field");
+            var mat = new Material(shader);
+            mat.name = $"{fontAsset.name} Material";
+            mat.SetTexture("_MainTex", fontAsset.atlasTextures[0]);
+            fontAsset.material = mat;
+            AssetDatabase.AddObjectToAsset(mat, fontAsset);
+            Debug.Log($"[TmpMigrator] 已补回 Material sub-asset。");
+        }
+        else if (AssetDatabase.GetAssetPath(fontAsset.material) != path)
+        {
+            fontAsset.material.name = $"{fontAsset.name} Material";
+            AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
+            Debug.Log($"[TmpMigrator] 已把已有 Material 转为 sub-asset。");
+        }
     }
 
     // ---------- Step 3 ----------
