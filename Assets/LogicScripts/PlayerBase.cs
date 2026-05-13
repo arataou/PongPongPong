@@ -2,6 +2,9 @@ using UnityEngine;
 
 public enum BallState { Normal, Fast, Big, Small }
 
+[System.Flags]
+public enum PickupBuff { None = 0, Speed = 1, Heavy = 2, Reverse = 4 }
+
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(CircleCollider2D))]
 public abstract class PlayerBase : MonoBehaviour
@@ -19,6 +22,11 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float smallScaleMul = 0.6f;
     [SerializeField] float smallMassMul  = 0.36f;
 
+    [Header("Pickup Buff")]
+    [SerializeField] float speedBuffMul = 1.5f;
+    [SerializeField] float heavyBuffMul = 3f;
+    [SerializeField] float buffDuration = 5f;
+
     [Header("Visual (optional)")]
     [Tooltip("Child GameObject shown only while in Fast state (the bright outline ring).")]
     [SerializeField] GameObject fastStateOutline;
@@ -29,6 +37,12 @@ public abstract class PlayerBase : MonoBehaviour
     float currentSpeed;
     float currentAccel;
 
+    CircleCollider2D    circleCol;
+    PickupBuff          activeBuffs = PickupBuff.None;
+    float speedTimer;
+    float heavyTimer;
+    float reverseTimer;
+
     public BallState State { get; private set; } = BallState.Normal;
     public bool IsPlayer => true;
     public abstract int PlayerIndex { get; }
@@ -38,6 +52,9 @@ public abstract class PlayerBase : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale  = 0f;
         rb.linearDamping = 0.8f;
+        circleCol = GetComponent<CircleCollider2D>();
+        var bouncy = Resources.Load<PhysicsMaterial2D>("Bouncy");
+        if (bouncy != null) circleCol.sharedMaterial = bouncy;
         ApplyState(BallState.Normal);
     }
 
@@ -56,7 +73,41 @@ public abstract class PlayerBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        moveDir = ReadInput().normalized;
+        TickBuffTimers();
+
+        Vector2 input = ReadInput();
+        if ((activeBuffs & PickupBuff.Reverse) != 0) input = -input;
+        moveDir = input.normalized;
+    }
+
+    void TickBuffTimers()
+    {
+        bool changed = false;
+        if ((activeBuffs & PickupBuff.Speed) != 0)
+        {
+            speedTimer -= Time.deltaTime;
+            if (speedTimer <= 0f) { activeBuffs &= ~PickupBuff.Speed; changed = true; }
+        }
+        if ((activeBuffs & PickupBuff.Heavy) != 0)
+        {
+            heavyTimer -= Time.deltaTime;
+            if (heavyTimer <= 0f) { activeBuffs &= ~PickupBuff.Heavy; changed = true; }
+        }
+        if ((activeBuffs & PickupBuff.Reverse) != 0)
+        {
+            reverseTimer -= Time.deltaTime;
+            if (reverseTimer <= 0f) activeBuffs &= ~PickupBuff.Reverse;
+        }
+        if (changed) RecalcStats();
+    }
+
+    public void ApplyPickupBuff(PickupBuff buff)
+    {
+        activeBuffs |= buff;
+        if ((buff & PickupBuff.Speed)   != 0) speedTimer   = buffDuration;
+        if ((buff & PickupBuff.Heavy)   != 0) heavyTimer   = buffDuration;
+        if ((buff & PickupBuff.Reverse) != 0) reverseTimer = buffDuration;
+        RecalcStats();
     }
 
     protected virtual void FixedUpdate()
@@ -71,35 +122,47 @@ public abstract class PlayerBase : MonoBehaviour
     public void ApplyState(BallState s)
     {
         State = s;
-        switch (s)
+        RecalcStats();
+        if (fastStateOutline != null)
+            fastStateOutline.SetActive(s == BallState.Fast);
+    }
+
+    void RecalcStats()
+    {
+        float   speed = baseMoveSpeed;
+        float   accel = baseAcceleration;
+        float   mass  = baseMass;
+        Vector3 scale = Vector3.one;
+
+        switch (State)
         {
             case BallState.Fast:
-                currentSpeed = baseMoveSpeed * fastSpeedMul;
-                currentAccel = baseAcceleration * fastAccelMul;
-                transform.localScale = Vector3.one;
-                rb.mass = baseMass;
+                speed *= fastSpeedMul;
+                accel *= fastAccelMul;
                 break;
             case BallState.Big:
-                currentSpeed = baseMoveSpeed;
-                currentAccel = baseAcceleration;
-                transform.localScale = Vector3.one * bigScaleMul;
-                rb.mass = baseMass * bigMassMul;
+                scale *= bigScaleMul;
+                mass  *= bigMassMul;
                 break;
             case BallState.Small:
-                currentSpeed = baseMoveSpeed;
-                currentAccel = baseAcceleration;
-                transform.localScale = Vector3.one * smallScaleMul;
-                rb.mass = baseMass * smallMassMul;
-                break;
-            default:
-                currentSpeed = baseMoveSpeed;
-                currentAccel = baseAcceleration;
-                transform.localScale = Vector3.one;
-                rb.mass = baseMass;
+                scale *= smallScaleMul;
+                mass  *= smallMassMul;
                 break;
         }
 
-        if (fastStateOutline != null)
-            fastStateOutline.SetActive(s == BallState.Fast);
+        if ((activeBuffs & PickupBuff.Speed) != 0)
+        {
+            speed *= speedBuffMul;
+            accel *= speedBuffMul;
+        }
+        if ((activeBuffs & PickupBuff.Heavy) != 0)
+        {
+            mass *= heavyBuffMul;
+        }
+
+        currentSpeed = speed;
+        currentAccel = accel;
+        if (rb != null) rb.mass = mass;
+        transform.localScale   = scale;
     }
 }
