@@ -5,14 +5,17 @@ public class HudController : MonoBehaviour
 {
     [SerializeField] TMP_Text stateLabel;
     [SerializeField] TMP_Text aiLabel;
+    [SerializeField] TMP_Text coopTimeLabel;
     [SerializeField] float warningThreshold = 3f;
     [SerializeField] Color normalColor  = Color.white;
     [SerializeField] Color warningColor = Color.red;
 
     void Update()
     {
+        bool isCoop = GameSession.Instance != null && GameSession.Instance.Mode == GameMode.Coop;
         UpdateStateLabel();
         UpdateAILabel();
+        UpdateCoopLabel(isCoop);
     }
 
     void UpdateStateLabel()
@@ -44,5 +47,20 @@ public class HudController : MonoBehaviour
         {
             aiLabel.color = normalColor;
         }
+    }
+
+    void UpdateCoopLabel(bool isCoop)
+    {
+        if (coopTimeLabel == null) return;
+        if (!isCoop || MatchManager.Instance == null)
+        {
+            coopTimeLabel.gameObject.SetActive(false);
+            return;
+        }
+        coopTimeLabel.gameObject.SetActive(true);
+        float t = MatchManager.Instance.ElapsedTime;
+        int min = Mathf.FloorToInt(t / 60f);
+        int sec = Mathf.FloorToInt(t % 60f);
+        coopTimeLabel.text = $"存活 {min:00}:{sec:00}";
     }
 }

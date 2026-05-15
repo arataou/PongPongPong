@@ -14,6 +14,12 @@ public class GameFeel : MonoBehaviour
     [SerializeField] float endSlowMoScale    = 0.25f;
     [SerializeField] float endSlowMoDuration = 0.45f;
 
+    [Header("Impact FX")]
+    [SerializeField] ParticleSystem impactParticle;
+    [SerializeField] float impactShakeMinVelocity = 4f;
+    [SerializeField] float impactShakeAmp         = 0.06f;
+    [SerializeField] float impactShakeDur         = 0.08f;
+
     public static GameFeel Instance { get; private set; }
 
     Vector3 baseLocalPos;
@@ -43,6 +49,21 @@ public class GameFeel : MonoBehaviour
         StartCoroutine(SlowMoRoutine(onComplete));
     }
 
+    public void PlayImpact(Vector2 worldPos, float relativeVelocity)
+    {
+        if (impactParticle != null && relativeVelocity >= 1f)
+        {
+            impactParticle.transform.position = worldPos;
+            var emit = new ParticleSystem.EmitParams { applyShapeToPosition = true };
+            impactParticle.Emit(emit, Mathf.Clamp(Mathf.RoundToInt(relativeVelocity * 1.5f), 4, 24));
+        }
+        if (relativeVelocity >= impactShakeMinVelocity)
+        {
+            float strength = Mathf.Clamp01(relativeVelocity / 12f);
+            StartShake(impactShakeAmp * (0.5f + strength), impactShakeDur);
+        }
+    }
+
     IEnumerator SlowMoRoutine(Action onComplete)
     {
         Time.timeScale = endSlowMoScale;
@@ -52,9 +73,12 @@ public class GameFeel : MonoBehaviour
 
     void StartShake(float amp, float dur)
     {
-        currentShakeAmp = amp;
-        currentShakeDur = dur;
-        shakeTimeLeft   = dur;
+        if (amp > currentShakeAmp || shakeTimeLeft <= 0f)
+        {
+            currentShakeAmp = amp;
+            currentShakeDur = dur;
+            shakeTimeLeft   = dur;
+        }
     }
 
     void LateUpdate()

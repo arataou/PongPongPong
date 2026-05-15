@@ -40,6 +40,8 @@ public class StateRouletteController : MonoBehaviour
         var players = MatchManager.AlivePlayers;
         for (int i = 0; i < players.Count; i++)
             players[i].ApplyState(RandomState());
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxStateSwitch);
     }
 
     static BallState RandomState()

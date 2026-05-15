@@ -33,6 +33,15 @@ public class ArenaBounds : MonoBehaviour
         if (showBorder) SetupBorder();
     }
 
+    public void Apply(ArenaPreset preset)
+    {
+        if (preset == null) return;
+        min = preset.boundsMin;
+        max = preset.boundsMax;
+        borderColor = preset.borderColor;
+        if (showBorder) SetupBorder();
+    }
+
     void SetupBorder()
     {
         lr = GetComponent<LineRenderer>();

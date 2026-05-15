@@ -9,6 +9,8 @@ public class BuffPickup : MonoBehaviour
         var player = other.GetComponent<PlayerBase>();
         if (player == null) return;
         player.ApplyPickupBuff(buffType);
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxBuffPickup);
         Destroy(gameObject);
     }
 }

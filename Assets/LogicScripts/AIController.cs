@@ -7,12 +7,20 @@ public class AIController : MonoBehaviour
     [SerializeField] float acceleration = 25f;
 
     Rigidbody2D rb;
+    float       speedMul = 1f;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale  = 0f;
         rb.linearDamping = 0.8f;
+
+        if (GameSession.Instance != null)
+        {
+            var p = GameSession.Instance.Profile;
+            speedMul = p.speedMul;
+            rb.mass *= p.massMul;
+        }
     }
 
     void FixedUpdate()
@@ -24,7 +32,7 @@ public class AIController : MonoBehaviour
 
         rb.linearVelocity = Vector2.MoveTowards(
             rb.linearVelocity,
-            dir * moveSpeed,
+            (moveSpeed * speedMul) * dir,
             acceleration * Time.fixedDeltaTime
         );
     }

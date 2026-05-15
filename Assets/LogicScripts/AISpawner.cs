@@ -6,24 +6,44 @@ public class AISpawner : MonoBehaviour
     [SerializeField] float firstSpawnDelay = 60f;
     [SerializeField] float spawnInterval   = 10f;
 
+    [Header("COOP Scaling")]
+    [Tooltip("COOP 模式下,每隔此秒数把 spawnInterval 减半。")]
+    [SerializeField] float coopHalveEvery     = 30f;
+    [SerializeField] float coopMinInterval    = 1f;
+    [SerializeField] int   coopMaxConcurrent  = 8;
+
     public static AISpawner Instance { get; private set; }
 
     public float TimeUntilNext => timer;
     public bool  FirstSpawned  => firstSpawned;
 
     float timer;
+    float currentInterval;
+    float coopElapsed;
     bool  firstSpawned;
+    bool  isCoop;
+    static int aliveAICount;
 
     void Awake()
     {
         if (Instance != null && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
+        aliveAICount = 0;
     }
 
     void Start()
     {
-        timer = firstSpawnDelay;
-        firstSpawned = false;
+        if (GameSession.Instance != null)
+        {
+            var p = GameSession.Instance.Profile;
+            firstSpawnDelay = p.firstSpawnDelay;
+            spawnInterval   = p.spawnInterval;
+            isCoop          = GameSession.Instance.Mode == GameMode.Coop;
+        }
+        timer           = firstSpawnDelay;
+        currentInterval = spawnInterval;
+        coopElapsed     = 0f;
+        firstSpawned    = false;
     }
 
     void Update()
@@ -33,11 +53,27 @@ public class AISpawner : MonoBehaviour
             MatchManager.Instance.CurrentOutcome != MatchManager.Outcome.Ongoing) return;
 
         timer -= Time.deltaTime;
+
+        if (isCoop)
+        {
+            coopElapsed += Time.deltaTime;
+            float halvings = Mathf.Floor(coopElapsed / Mathf.Max(0.01f, coopHalveEvery));
+            float target = spawnInterval * Mathf.Pow(0.5f, halvings);
+            currentInterval = Mathf.Max(coopMinInterval, target);
+        }
+        else
+        {
+            currentInterval = spawnInterval;
+        }
+
         if (timer <= 0f)
         {
-            SpawnOne();
-            firstSpawned = true;
-            timer = spawnInterval;
+            if (!isCoop || aliveAICount < coopMaxConcurrent)
+            {
+                SpawnOne();
+                firstSpawned = true;
+            }
+            timer = currentInterval;
         }
     }
 
@@ -45,7 +81,21 @@ public class AISpawner : MonoBehaviour
     {
         if (aiPrefab == null || ArenaBounds.Instance == null) return;
         Vector2 pos = RandomPerimeterPoint();
-        Instantiate(aiPrefab, pos, Quaternion.identity);
+        var go = Instantiate(aiPrefab, pos, Quaternion.identity);
+        var tracker = go.AddComponent<AILifeTracker>();
+        tracker.OnSpawn();
+        if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxAISpawn);
+    }
+
+    public static void NotifyAIDestroyed()
+    {
+        if (aliveAICount > 0) aliveAICount--;
+    }
+
+    public static void NotifyAISpawned()
+    {
+        aliveAICount++;
     }
 
     Vector2 RandomPerimeterPoint()
@@ -61,4 +111,10 @@ public class AISpawner : MonoBehaviour
             default: return new Vector2(Mathf.Lerp(b.Min.x, b.Max.x, t), b.Max.y);
         }
     }
+}
+
+class AILifeTracker : MonoBehaviour
+{
+    public void OnSpawn() { AISpawner.NotifyAISpawned(); }
+    void OnDestroy()      { AISpawner.NotifyAIDestroyed(); }
 }

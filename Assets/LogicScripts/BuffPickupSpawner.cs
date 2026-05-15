@@ -16,6 +16,8 @@ public class BuffPickupSpawner : MonoBehaviour
         PickupBuff.Speed,
         PickupBuff.Heavy,
         PickupBuff.Reverse,
+        PickupBuff.Invincible,
+        PickupBuff.Shockwave,
     };
 
     float timer;
@@ -53,19 +55,34 @@ public class BuffPickupSpawner : MonoBehaviour
         go.transform.position   = RandomArenaPoint();
         go.transform.localScale = Vector3.one * pickupScale;
 
+        var buffType = BuffPool[Random.Range(0, BuffPool.Length)];
+
         var sr = go.AddComponent<SpriteRenderer>();
         sr.sprite       = pickupSprite;
         sr.sortingOrder = 0;
-        sr.color        = pickupColor;
+        sr.color        = ColorFor(buffType);
 
         var col = go.AddComponent<CircleCollider2D>();
         col.isTrigger = true;
         col.radius    = pickupRadius;
 
         var pickup = go.AddComponent<BuffPickup>();
-        pickup.buffType = BuffPool[Random.Range(0, BuffPool.Length)];
+        pickup.buffType = buffType;
 
         active.Add(pickup);
+    }
+
+    Color ColorFor(PickupBuff b)
+    {
+        switch (b)
+        {
+            case PickupBuff.Speed:      return new Color(1f,   0.9f, 0.3f, 1f);
+            case PickupBuff.Heavy:      return new Color(0.6f, 0.3f, 0.9f, 1f);
+            case PickupBuff.Reverse:    return new Color(0.5f, 0.5f, 0.5f, 1f);
+            case PickupBuff.Invincible: return new Color(1f,   0.85f, 0.3f, 1f);
+            case PickupBuff.Shockwave:  return new Color(1f,   0.45f, 0.2f, 1f);
+            default:                    return pickupColor;
+        }
     }
 
     Vector2 RandomArenaPoint()
