@@ -35,7 +35,7 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float heavyBuffMul       = 3f;
     [SerializeField] float buffDuration       = 5f;
     [SerializeField] float invincibleDuration = 3f;
-    [SerializeField] float shockwaveRadius    = 3f;
+    [SerializeField] float shockwaveRadius    = 4.5f;
     [SerializeField] float shockwaveForce     = 12f;
 
     [Header("Visual (optional)")]
@@ -66,6 +66,32 @@ public abstract class PlayerBase : MonoBehaviour
     public bool IsInvincible => (activeBuffs & PickupBuff.Invincible) != 0;
     public abstract int PlayerIndex { get; }
 
+    static int  s_playerLayer       = -1;
+    static int  s_invinciblePlayerLayer = -1;
+    static bool s_layerMatrixInited = false;
+
+    public static int PlayerLayer
+    {
+        get
+        {
+            EnsureLayersInited();
+            return s_playerLayer;
+        }
+    }
+
+    static void EnsureLayersInited()
+    {
+        if (s_layerMatrixInited) return;
+        s_playerLayer           = LayerMask.NameToLayer("Player");
+        s_invinciblePlayerLayer = LayerMask.NameToLayer("InvinciblePlayer");
+        if (s_playerLayer >= 0 && s_invinciblePlayerLayer >= 0)
+        {
+            Physics2D.IgnoreLayerCollision(s_invinciblePlayerLayer, s_playerLayer, true);
+            Physics2D.IgnoreLayerCollision(s_invinciblePlayerLayer, s_invinciblePlayerLayer, true);
+        }
+        s_layerMatrixInited = true;
+    }
+
     protected virtual void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -74,6 +100,8 @@ public abstract class PlayerBase : MonoBehaviour
         circleCol = GetComponent<CircleCollider2D>();
         var bouncy = Resources.Load<PhysicsMaterial2D>("Bouncy");
         if (bouncy != null) circleCol.sharedMaterial = bouncy;
+        EnsureLayersInited();
+        if (s_playerLayer >= 0) gameObject.layer = s_playerLayer;
         ApplyState(BallState.Normal);
         if (invincibleAura != null) invincibleAura.SetActive(false);
     }
@@ -127,6 +155,7 @@ public abstract class PlayerBase : MonoBehaviour
             {
                 activeBuffs &= ~PickupBuff.Invincible;
                 if (invincibleAura != null) invincibleAura.SetActive(false);
+                if (s_playerLayer >= 0) gameObject.layer = s_playerLayer;
             }
         }
         if (changed) RecalcStats();
@@ -146,6 +175,7 @@ public abstract class PlayerBase : MonoBehaviour
         {
             invincibleTimer = invincibleDuration;
             if (invincibleAura != null) invincibleAura.SetActive(true);
+            if (s_invinciblePlayerLayer >= 0) gameObject.layer = s_invinciblePlayerLayer;
         }
         RecalcStats();
     }

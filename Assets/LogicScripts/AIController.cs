@@ -15,6 +15,9 @@ public class AIController : MonoBehaviour
         rb.gravityScale  = 0f;
         rb.linearDamping = 0.8f;
 
+        int playerLayer = PlayerBase.PlayerLayer;
+        if (playerLayer >= 0) gameObject.layer = playerLayer;
+
         if (GameSession.Instance != null)
         {
             var p = GameSession.Instance.Profile;
