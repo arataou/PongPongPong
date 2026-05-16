@@ -39,6 +39,8 @@ public class BallTrail : MonoBehaviour
         bool isFast = player.State == BallState.Fast;
         trail.time = baseTime * (isFast ? fastTimeMul : 1f);
         trail.emitting = !player.IsInvincible;
+        float s = Mathf.Abs(transform.lossyScale.x);
+        trail.startWidth = baseWidth * s;
     }
 
     void RefreshColor()

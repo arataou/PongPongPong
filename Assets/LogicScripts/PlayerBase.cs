@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public enum BallState { Normal, Fast, Big, Small }
@@ -43,6 +44,8 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] GameObject fastStateOutline;
     [Tooltip("Child GameObject shown only while invincible (an aura/halo).")]
     [SerializeField] GameObject invincibleAura;
+    [Tooltip("中文飘字字体 (拖 MSYH SDF)。留空则飘字降级显示英文缩写。")]
+    [SerializeField] TMP_FontAsset chineseFont;
 
     [Header("Audio")]
     [SerializeField] float impactCooldown = 0.05f;
@@ -54,6 +57,7 @@ public abstract class PlayerBase : MonoBehaviour
     float currentAccel;
 
     CircleCollider2D    circleCol;
+    BuffVisual          buffVisual;
     PickupBuff          activeBuffs = PickupBuff.None;
     float speedTimer;
     float heavyTimer;
@@ -64,6 +68,8 @@ public abstract class PlayerBase : MonoBehaviour
     public BallState State { get; private set; } = BallState.Normal;
     public bool IsPlayer => true;
     public bool IsInvincible => (activeBuffs & PickupBuff.Invincible) != 0;
+    public PickupBuff    ActiveBuffs => activeBuffs;
+    public TMP_FontAsset ChineseFont => chineseFont;
     public abstract int PlayerIndex { get; }
 
     static int  s_playerLayer       = -1;
@@ -104,6 +110,9 @@ public abstract class PlayerBase : MonoBehaviour
         if (s_playerLayer >= 0) gameObject.layer = s_playerLayer;
         ApplyState(BallState.Normal);
         if (invincibleAura != null) invincibleAura.SetActive(false);
+
+        buffVisual = GetComponent<BuffVisual>();
+        if (buffVisual == null) buffVisual = gameObject.AddComponent<BuffVisual>();
     }
 
     protected virtual void Start()
@@ -178,6 +187,8 @@ public abstract class PlayerBase : MonoBehaviour
             if (s_invinciblePlayerLayer >= 0) gameObject.layer = s_invinciblePlayerLayer;
         }
         RecalcStats();
+
+        if (buffVisual != null) buffVisual.OnPickup(buff);
     }
 
     void TriggerShockwave()

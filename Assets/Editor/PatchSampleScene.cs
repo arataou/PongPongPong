@@ -20,6 +20,7 @@ public static class PatchSampleScene
 {
     const string ScenePath = "Assets/Scenes/SampleScene.unity";
     const string AIPrefabPath = "Assets/Prefabs/AIBall.prefab";
+    const string ChineseFontPath = "Assets/Fonts/MSYH SDF.asset";
 
     [MenuItem("Tools/PongPongPong/Patch SampleScene")]
     public static void Patch()
@@ -134,6 +135,24 @@ public static class PatchSampleScene
             {
                 p.gameObject.AddComponent<BallTrail>();
                 created++;
+            }
+        }
+
+        // ----- 9. PlayerBase.chineseFont 接线(给 buff 飘字用中文) -----
+        var cnFont = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>(ChineseFontPath);
+        if (cnFont != null)
+        {
+            foreach (var p in new PlayerBase[] { p1, p2, p3 })
+            {
+                if (p == null) continue;
+                var so = new SerializedObject(p);
+                var prop = so.FindProperty("chineseFont");
+                if (prop != null && prop.objectReferenceValue == null)
+                {
+                    prop.objectReferenceValue = cnFont;
+                    so.ApplyModifiedPropertiesWithoutUndo();
+                    wired++;
+                }
             }
         }
 
