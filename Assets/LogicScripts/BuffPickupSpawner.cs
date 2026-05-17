@@ -3,10 +3,8 @@ using UnityEngine;
 
 public class BuffPickupSpawner : MonoBehaviour
 {
-    const int CueSegments = 48;
     const int PickupSortingOrder = 3;
     const int CueSpriteSortingOrder = 2;
-    const int CueRingSortingOrder = 4;
 
     [SerializeField] float  spawnInterval = 5f;
     [SerializeField] int    maxOnField    = 3;
@@ -38,7 +36,6 @@ public class BuffPickupSpawner : MonoBehaviour
     PickupBuff pendingSpawnBuff;
     GameObject spawnCue;
     SpriteRenderer spawnCueSprite;
-    LineRenderer spawnCueRing;
     readonly List<BuffPickup> active = new List<BuffPickup>();
 
     void Start()
@@ -48,17 +45,24 @@ public class BuffPickupSpawner : MonoBehaviour
 
     void Update()
     {
-        if (Time.timeScale == 0f) return;
+        if (Time.timeScale == 0f)
+        {
+            CancelPendingSpawn();
+            return;
+        }
         if (MatchManager.Instance != null &&
-            MatchManager.Instance.CurrentOutcome != MatchManager.Outcome.Ongoing) return;
+            MatchManager.Instance.CurrentOutcome != MatchManager.Outcome.Ongoing)
+        {
+            CancelPendingSpawn();
+            return;
+        }
 
         for (int i = active.Count - 1; i >= 0; i--)
             if (active[i] == null) active.RemoveAt(i);
 
         if (active.Count >= maxOnField)
         {
-            hasPendingSpawn = false;
-            ClearSpawnCue();
+            CancelPendingSpawn();
             return;
         }
 
@@ -124,9 +128,6 @@ public class BuffPickupSpawner : MonoBehaviour
         spawnCueSprite.color = sprite != null ? Color.white : ColorFor(pendingSpawnBuff);
         spawnCueSprite.sortingOrder = PickupSortingOrder;
 
-        if (spawnCueRing != null)
-            Destroy(spawnCueRing);
-
         ConfigurePickupColliderAndBuff(go, pendingSpawnBuff);
         active.Add(go.GetComponent<BuffPickup>());
         ClearSpawnCueReferences();
@@ -167,45 +168,29 @@ public class BuffPickupSpawner : MonoBehaviour
         spawnCueSprite.sprite = sprite != null ? sprite : pickupSprite;
         spawnCueSprite.color = CueColor(0.34f);
         spawnCueSprite.sortingOrder = CueSpriteSortingOrder;
-
-        spawnCueRing = spawnCue.AddComponent<LineRenderer>();
-        spawnCueRing.useWorldSpace = false;
-        spawnCueRing.loop = true;
-        spawnCueRing.positionCount = CueSegments;
-        spawnCueRing.startWidth = 0.035f;
-        spawnCueRing.endWidth = 0.035f;
-        spawnCueRing.numCapVertices = 3;
-        spawnCueRing.numCornerVertices = 3;
-        spawnCueRing.material = new Material(Shader.Find("Sprites/Default"));
-        spawnCueRing.sortingOrder = CueRingSortingOrder;
     }
 
     void UpdateSpawnCue()
     {
-        if (spawnCue == null || spawnCueRing == null) return;
+        if (spawnCue == null || spawnCueSprite == null) return;
 
         float lead = Mathf.Max(0.001f, spawnCueLeadTime);
         float k = Mathf.Clamp01(1f - timer / lead);
         float pulse = 0.5f + 0.5f * Mathf.Sin(Time.time * 11f);
-        spawnCue.transform.localScale = Vector3.one * (pickupScale * spawnCueScale * Mathf.Lerp(0.88f, 1.08f, pulse));
+        float settle = Mathf.Lerp(spawnCueScale, 1f, k);
+        spawnCue.transform.localScale = Vector3.one * (pickupScale * settle * Mathf.Lerp(0.94f, 1.05f, pulse));
+        spawnCueSprite.color = CueColor(Mathf.Lerp(0.18f, 0.58f, k));
+    }
 
-        if (spawnCueSprite != null)
-            spawnCueSprite.color = CueColor(Mathf.Lerp(0.22f, 0.52f, k));
-
-        float r = pickupRadius * Mathf.Lerp(1.4f, 0.95f, k) * (1f + pulse * 0.08f);
-        for (int i = 0; i < CueSegments; i++)
-        {
-            float a = (i / (float)CueSegments) * Mathf.PI * 2f;
-            spawnCueRing.SetPosition(i, new Vector3(Mathf.Cos(a) * r, Mathf.Sin(a) * r, 0f));
-        }
-
-        Color c = CueColor(Mathf.Lerp(0.22f, 0.72f, k));
-        spawnCueRing.startColor = c;
-        spawnCueRing.endColor = c;
+    void CancelPendingSpawn()
+    {
+        hasPendingSpawn = false;
+        ClearSpawnCue();
     }
 
     void ClearSpawnCue()
     {
+        if (spawnCueSprite != null) spawnCueSprite.enabled = false;
         if (spawnCue != null) Destroy(spawnCue);
         ClearSpawnCueReferences();
     }
@@ -214,7 +199,6 @@ public class BuffPickupSpawner : MonoBehaviour
     {
         spawnCue = null;
         spawnCueSprite = null;
-        spawnCueRing = null;
     }
 
     Color CueColor(float alpha)

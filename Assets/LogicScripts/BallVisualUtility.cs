@@ -6,38 +6,32 @@ public static class BallVisualUtility
     {
         if (host == null) return null;
 
-        var renderers = host.GetComponentsInChildren<SpriteRenderer>(true);
-        for (int i = 0; i < renderers.Length; i++)
+        var rootRenderer = host.GetComponent<SpriteRenderer>();
+        if (rootRenderer != null)
         {
-            if (renderers[i] != null && renderers[i].transform != host.transform)
-                return renderers[i];
+            rootRenderer.enabled = true;
+            DisableLegacyChildVisual(host.transform);
+            return rootRenderer;
         }
 
-        var rootRenderer = host.GetComponent<SpriteRenderer>();
-        if (rootRenderer == null) return null;
-
-        var child = new GameObject("BallVisual");
-        child.transform.SetParent(host.transform, false);
-
-        var visual = child.AddComponent<SpriteRenderer>();
-        visual.sprite = rootRenderer.sprite;
-        visual.color = rootRenderer.color;
-        visual.sharedMaterial = rootRenderer.sharedMaterial;
-        visual.sortingLayerID = rootRenderer.sortingLayerID;
-        visual.sortingOrder = rootRenderer.sortingOrder;
-        visual.flipX = rootRenderer.flipX;
-        visual.flipY = rootRenderer.flipY;
-        visual.drawMode = rootRenderer.drawMode;
-        visual.size = rootRenderer.size;
-        visual.maskInteraction = rootRenderer.maskInteraction;
-
-        rootRenderer.enabled = false;
-        return visual;
+        return host.GetComponentInChildren<SpriteRenderer>(true);
     }
 
     public static Color AccentColor(GameObject host)
     {
-        var sprite = host != null ? host.GetComponentInChildren<SpriteRenderer>() : null;
+        var sprite = host != null ? EnsureChildSpriteRenderer(host) : null;
         return sprite != null ? sprite.color : Color.white;
+    }
+
+    static void DisableLegacyChildVisual(Transform root)
+    {
+        if (root == null) return;
+
+        var child = root.Find("BallVisual");
+        if (child == null) return;
+
+        var legacyRenderer = child.GetComponent<SpriteRenderer>();
+        if (legacyRenderer != null)
+            legacyRenderer.enabled = false;
     }
 }

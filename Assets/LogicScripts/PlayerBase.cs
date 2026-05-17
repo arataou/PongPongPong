@@ -112,8 +112,9 @@ public abstract class PlayerBase : MonoBehaviour
         ballSprite = BallVisualUtility.EnsureChildSpriteRenderer(gameObject);
         if (ballSprite != null)
         {
-            ballVisualTransform = ballSprite.transform;
-            ballVisualBaseScale = ballVisualTransform.localScale;
+            ballVisualTransform = ballSprite.transform != transform ? ballSprite.transform : null;
+            if (ballVisualTransform != null)
+                ballVisualBaseScale = ballVisualTransform.localScale;
         }
 
         var bouncy = Resources.Load<PhysicsMaterial2D>("Bouncy");
@@ -328,6 +329,8 @@ public abstract class PlayerBase : MonoBehaviour
 
     IEnumerator ImpactSquashRoutine(float strength)
     {
+        if (ballVisualTransform == null) yield break;
+
         const float dur = 0.16f;
         float t = 0f;
         while (t < dur)
@@ -343,7 +346,8 @@ public abstract class PlayerBase : MonoBehaviour
             yield return null;
         }
 
-        ballVisualTransform.localScale = ballVisualBaseScale;
+        if (ballVisualTransform != null)
+            ballVisualTransform.localScale = ballVisualBaseScale;
         impactSquashCoroutine = null;
     }
 }

@@ -32,9 +32,10 @@ public class BuffVisual : MonoBehaviour
         ballSprite = BallVisualUtility.EnsureChildSpriteRenderer(gameObject);
         if (ballSprite != null)
         {
-            spriteTransform     = ballSprite.transform;
+            spriteTransform     = ballSprite.transform != transform ? ballSprite.transform : null;
             spriteOriginalColor = ballSprite.color;
-            spriteOriginalScale = spriteTransform.localScale;
+            if (spriteTransform != null)
+                spriteOriginalScale = spriteTransform.localScale;
         }
 
         ringSpeed      = CreateRing("RingSpeed",      1.2f, new Color(1f,   0.9f,  0.3f, 1f));
@@ -126,7 +127,7 @@ public class BuffVisual : MonoBehaviour
 
     IEnumerator PickupFlashAndBounce()
     {
-        if (ballSprite == null || spriteTransform == null) yield break;
+        if (ballSprite == null) yield break;
 
         const float dur = 0.3f;
         float t = 0f;
@@ -135,12 +136,16 @@ public class BuffVisual : MonoBehaviour
             t += Time.deltaTime;
             float k = t / dur;
             ballSprite.color = Color.Lerp(Color.white, spriteOriginalColor, k);
-            float bump = 1f + 0.25f * Mathf.Sin(k * Mathf.PI);
-            spriteTransform.localScale = spriteOriginalScale * bump;
+            if (spriteTransform != null)
+            {
+                float bump = 1f + 0.25f * Mathf.Sin(k * Mathf.PI);
+                spriteTransform.localScale = spriteOriginalScale * bump;
+            }
             yield return null;
         }
         ballSprite.color = spriteOriginalColor;
-        spriteTransform.localScale = spriteOriginalScale;
+        if (spriteTransform != null)
+            spriteTransform.localScale = spriteOriginalScale;
     }
 
     IEnumerator PlayShockwaveRing()
