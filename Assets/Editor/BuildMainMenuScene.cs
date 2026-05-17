@@ -187,7 +187,7 @@ public static class BuildMainMenuScene
         d.modeLabel = CreateTmp("CurrentLabel", modeRow.transform, "模式: 对战", 24, CSubText).GetComponent<TextMeshProUGUI>();
         var modeLblRt = (RectTransform)d.modeLabel.transform;
         modeLblRt.anchorMin = new Vector2(0, 1); modeLblRt.anchorMax = new Vector2(1, 1);
-        modeLblRt.pivot = new Vector2(0.5f, 1); modeLblRt.anchoredPosition = new Vector2(0, -10);
+        modeLblRt.pivot = new Vector2(0.5f, 1); modeLblRt.anchoredPosition = new Vector2(0, -50);
         modeLblRt.sizeDelta = new Vector2(0, 30);
         d.modeLabel.alignment = TextAlignmentOptions.Center;
 
@@ -209,7 +209,7 @@ public static class BuildMainMenuScene
         d.pcLabel = CreateTmp("CurrentLabel", pcRow.transform, "当前: 2 人", 24, CSubText).GetComponent<TextMeshProUGUI>();
         var pcLblRt = (RectTransform)d.pcLabel.transform;
         pcLblRt.anchorMin = new Vector2(0, 1); pcLblRt.anchorMax = new Vector2(1, 1);
-        pcLblRt.pivot = new Vector2(0.5f, 1); pcLblRt.anchoredPosition = new Vector2(0, -10);
+        pcLblRt.pivot = new Vector2(0.5f, 1); pcLblRt.anchoredPosition = new Vector2(0, -50);
         pcLblRt.sizeDelta = new Vector2(0, 30);
         d.pcLabel.alignment = TextAlignmentOptions.Center;
 
@@ -221,7 +221,7 @@ public static class BuildMainMenuScene
         d.diffLabel = CreateTmp("CurrentLabel", diffRow.transform, "难度: 普通", 24, CSubText).GetComponent<TextMeshProUGUI>();
         var dlRt = (RectTransform)d.diffLabel.transform;
         dlRt.anchorMin = new Vector2(0, 1); dlRt.anchorMax = new Vector2(1, 1);
-        dlRt.pivot = new Vector2(0.5f, 1); dlRt.anchoredPosition = new Vector2(0, -10);
+        dlRt.pivot = new Vector2(0.5f, 1); dlRt.anchoredPosition = new Vector2(0, -50);
         dlRt.sizeDelta = new Vector2(0, 30);
         d.diffLabel.alignment = TextAlignmentOptions.Center;
 
