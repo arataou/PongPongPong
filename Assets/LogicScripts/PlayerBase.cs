@@ -37,8 +37,8 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float heavyBuffMul       = 3f;
     [SerializeField] float buffDuration       = 5f;
     [SerializeField] float invincibleDuration = 3f;
-    [SerializeField] float shockwaveRadius    = 4.5f;
-    [SerializeField] float shockwaveForce     = 12f;
+    [SerializeField] float shockwaveRadius    = 5.5f;
+    [SerializeField] float shockwaveForce     = 30f;
 
     [Header("Visual (optional)")]
     [Tooltip("Child GameObject shown only while in Fast state (the bright outline ring).")]
