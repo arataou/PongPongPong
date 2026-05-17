@@ -40,7 +40,8 @@ public class AISpawner : MonoBehaviour
             spawnInterval   = p.spawnInterval;
             isCoop          = GameSession.Instance.Mode == GameMode.Coop;
         }
-        timer           = firstSpawnDelay;
+        // COOP 模式开局立即生成 AI (留 1s 给玩家就位), PvP 走难度的正常首次延迟
+        timer           = isCoop ? 1f : firstSpawnDelay;
         currentInterval = spawnInterval;
         coopElapsed     = 0f;
         firstSpawned    = false;

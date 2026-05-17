@@ -18,6 +18,12 @@ public class StateRouletteController : MonoBehaviour
 
     void Start()
     {
+        // COOP 模式下按难度收紧状态轮盘切换 (Easy×1.4 / Normal×1.0 / Hard×0.55)
+        if (GameSession.Instance != null && GameSession.Instance.Mode == GameMode.Coop)
+        {
+            float mul = GameSession.Instance.Profile.coopPacingMul;
+            if (mul > 0f) interval *= mul;
+        }
         timer = 0f;
     }
 
