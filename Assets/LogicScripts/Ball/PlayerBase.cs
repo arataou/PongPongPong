@@ -37,9 +37,9 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float heavyBuffMul       = 3f;
     [SerializeField] float buffDuration       = 5f;
     [SerializeField] float invincibleDuration = 3f;
-    [SerializeField] float shockwaveRadius    = 13f;
+    [SerializeField] float shockwaveRadius    = 10f;
     [Tooltip("中心点峰值速度增量 (m/s). 边缘按 1-d/r 线性衰减.")]
-    [SerializeField] float shockwavePeakSpeed = 60f;
+    [SerializeField] float shockwavePeakSpeed = 35f;
     [Tooltip("每多 1 单位质量,击退速度减少多少 (0.1 = 10%/mass). 重球减得多但不会归零.")]
     [SerializeField] float shockwaveMassPenalty = 0.1f;
     [Tooltip("击退速度倍率下限 (即使巨重球也至少能弹这么多).")]

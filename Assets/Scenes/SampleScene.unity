@@ -483,8 +483,8 @@ MonoBehaviour:
   heavyBuffMul: 3
   buffDuration: 5
   invincibleDuration: 3
-  shockwaveRadius: 13
-  shockwavePeakSpeed: 60
+  shockwaveRadius: 10
+  shockwavePeakSpeed: 35
   shockwaveMassPenalty: 0.1
   shockwaveMinMul: 0.2
   fastStateOutline: {fileID: 0}
@@ -1576,8 +1576,8 @@ MonoBehaviour:
   heavyBuffMul: 3
   buffDuration: 5
   invincibleDuration: 3
-  shockwaveRadius: 13
-  shockwavePeakSpeed: 60
+  shockwaveRadius: 10
+  shockwavePeakSpeed: 35
   shockwaveMassPenalty: 0.1
   shockwaveMinMul: 0.2
   fastStateOutline: {fileID: 0}
@@ -3055,8 +3055,8 @@ MonoBehaviour:
   heavyBuffMul: 3
   buffDuration: 5
   invincibleDuration: 3
-  shockwaveRadius: 13
-  shockwavePeakSpeed: 60
+  shockwaveRadius: 10
+  shockwavePeakSpeed: 35
   shockwaveMassPenalty: 0.1
   shockwaveMinMul: 0.2
   fastStateOutline: {fileID: 0}
