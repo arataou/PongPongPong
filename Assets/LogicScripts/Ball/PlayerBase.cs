@@ -38,7 +38,12 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float buffDuration       = 5f;
     [SerializeField] float invincibleDuration = 3f;
     [SerializeField] float shockwaveRadius    = 8f;
-    [SerializeField] float shockwaveForce     = 70f;
+    [Tooltip("中心点峰值速度增量 (m/s). 边缘按 1-d/r 线性衰减.")]
+    [SerializeField] float shockwavePeakSpeed = 25f;
+    [Tooltip("每多 1 单位质量,击退速度减少多少 (0.1 = 10%/mass). 重球减得多但不会归零.")]
+    [SerializeField] float shockwaveMassPenalty = 0.1f;
+    [Tooltip("击退速度倍率下限 (即使巨重球也至少能弹这么多).")]
+    [SerializeField] float shockwaveMinMul = 0.2f;
 
     [Header("Visual (optional)")]
     [Tooltip("Child GameObject shown only while in Fast state (the bright outline ring).")]
@@ -259,9 +264,13 @@ public abstract class PlayerBase : MonoBehaviour
             float dist = toward.magnitude;
             if (dist < 0.001f) continue;
             float falloff = 1f - Mathf.Clamp01(dist / shockwaveRadius);
-            h.attachedRigidbody.AddForce(toward.normalized * (shockwaveForce * falloff), ForceMode2D.Impulse);
+            // 直接给速度增量(不走 Impulse, 否则被质量除掉, 重球弹不动)
+            // 质量惩罚走线性: 每多 1 mass 减 shockwaveMassPenalty, 下限 shockwaveMinMul
+            float mass = h.attachedRigidbody.mass;
+            float massMul = Mathf.Clamp(1f - shockwaveMassPenalty * (mass - 1f), shockwaveMinMul, 1f);
+            h.attachedRigidbody.linearVelocity += toward.normalized * (shockwavePeakSpeed * falloff * massMul);
         }
-        if (GameFeel.Instance != null) GameFeel.Instance.PlayImpact(origin, shockwaveForce, GetBallAccentColor());
+        if (GameFeel.Instance != null) GameFeel.Instance.PlayImpact(origin, shockwavePeakSpeed, GetBallAccentColor());
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxImpactHard, 1f);
     }
