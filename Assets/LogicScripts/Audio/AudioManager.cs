@@ -34,9 +34,22 @@ public class AudioManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null && Instance != this) { Destroy(gameObject); return; }
+        if (Instance != null && Instance != this)
+        {
+            if (IsDedicatedAudioObject()) Destroy(gameObject);
+            else Destroy(this);
+            return;
+        }
+
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        if (IsDedicatedAudioObject())
+        {
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Debug.LogWarning("AudioManager should be placed on a dedicated GameObject to persist across scenes.");
+        }
 
         if (bgmSource == null)
         {
@@ -56,6 +69,25 @@ public class AudioManager : MonoBehaviour
 
         if (GameSession.Instance != null)
             ApplyVolumes(GameSession.Instance.BgmVolume, GameSession.Instance.SfxVolume);
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this) Instance = null;
+    }
+
+    bool IsDedicatedAudioObject()
+    {
+        var components = GetComponents<Component>();
+        foreach (var component in components)
+        {
+            if (component == null) continue;
+            if (component is Transform) continue;
+            if (component is AudioManager) continue;
+            if (component is AudioSource) continue;
+            return false;
+        }
+        return true;
     }
 
     public void ApplyVolumes(float bgm, float sfx)

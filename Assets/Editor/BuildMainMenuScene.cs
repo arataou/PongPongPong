@@ -76,8 +76,10 @@ public static class BuildMainMenuScene
         var pcSel    = rootGo.AddComponent<PlayerCountSelector>();
         var diffSel  = rootGo.AddComponent<DifficultySelector>();
         var mapSel   = rootGo.AddComponent<MapSelectController>();
-        rootGo.AddComponent<AudioManager>();
         rootGo.AddComponent<DemoModeRunner>();
+
+        var audioGo = new GameObject("AudioManager");
+        audioGo.AddComponent<AudioManager>();
 
         var settingsComp = settingsData.panel.AddComponent<SettingsPanel>();
         var historyComp  = historyData.panel.AddComponent<HistoryPanel>();
