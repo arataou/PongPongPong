@@ -40,6 +40,12 @@ public class BuffPickupSpawner : MonoBehaviour
 
     void Start()
     {
+        // COOP 模式下按难度收紧 buff 生成节奏 (Easy×1.4 / Normal×1.0 / Hard×0.55)
+        if (GameSession.Instance != null && GameSession.Instance.Mode == GameMode.Coop)
+        {
+            float mul = GameSession.Instance.Profile.coopPacingMul;
+            if (mul > 0f) spawnInterval *= mul;
+        }
         timer = spawnInterval;
     }
 

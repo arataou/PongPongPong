@@ -8,6 +8,8 @@ public class GameModeSelector : MonoBehaviour
     [SerializeField] Button   coopButton;
     [SerializeField] TMP_Text currentLabel;
     [SerializeField] GameObject coopHintGroup;
+    [Tooltip("整个难度行 (DifficultyRow). PvP 模式自动隐藏 - 不让玩家选难度. 留空则不隐藏.")]
+    [SerializeField] GameObject difficultyGroup;
 
     [SerializeField] Color selectedColor   = new Color(0.3f, 0.7f, 1f, 1f);
     [SerializeField] Color unselectedColor = new Color(1f, 1f, 1f, 0.5f);
@@ -34,6 +36,7 @@ public class GameModeSelector : MonoBehaviour
         Paint(pvpButton,  m == GameMode.PvP);
         Paint(coopButton, m == GameMode.Coop);
         if (coopHintGroup != null) coopHintGroup.SetActive(m == GameMode.Coop);
+        if (difficultyGroup != null) difficultyGroup.SetActive(m == GameMode.Coop);
     }
 
     void Paint(Button btn, bool selected)
