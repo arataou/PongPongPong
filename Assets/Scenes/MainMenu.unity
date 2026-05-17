@@ -8245,7 +8245,7 @@ MonoBehaviour:
   bgmSource: {fileID: 0}
   sfxChannels: 6
   menuBgm: {fileID: 0}
-  gameBgm: {fileID: 0}
+  gameBgm: {fileID: 8300000, guid: 7fb72dd591c748ca8e96a53c9ff02617, type: 3}
   sfxClickUI: {fileID: 0}
   sfxImpactSoft: {fileID: 0}
   sfxImpactHard: {fileID: 0}
