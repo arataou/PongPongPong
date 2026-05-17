@@ -4,7 +4,7 @@ using UnityEngine;
 public class BallTrail : MonoBehaviour
 {
     [SerializeField] float baseWidth   = 0.25f;
-    [SerializeField] float baseTime    = 0.35f;
+    [SerializeField] float baseTime    = 0.22f;
     [SerializeField] float fastTimeMul = 2f;
     [Tooltip("拖尾随球大小缩放的指数。1=线性,>1 大球更夸张/小球更细短")]
     [SerializeField] float sizeTrailPower = 1.3f;
