@@ -217,6 +217,9 @@ public abstract class PlayerBase : MonoBehaviour
         }
         RecalcStats();
 
+        if ((buff & PickupBuff.Speed) != 0 && AudioManager.Instance != null)
+            AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxSpeedBoost, 0.9f, true);
+
         if (buffVisual != null) buffVisual.OnPickup(buff);
     }
 
@@ -284,7 +287,7 @@ public abstract class PlayerBase : MonoBehaviour
         }
         if (GameFeel.Instance != null) GameFeel.Instance.PlayImpact(origin, shockwavePeakSpeed, GetBallAccentColor());
         if (AudioManager.Instance != null)
-            AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxImpactHard, 1f);
+            AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxShockwave, 1f, true);
     }
 
     protected virtual void FixedUpdate()

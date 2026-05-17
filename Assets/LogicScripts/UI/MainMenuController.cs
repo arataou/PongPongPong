@@ -24,6 +24,8 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] PlayerCountSelector playerCountSelector;
     [SerializeField] MapSelectController mapSelectController;
 
+    bool startingGame;
+
     void Start()
     {
         GameSession.Ensure();
@@ -73,12 +75,16 @@ public class MainMenuController : MonoBehaviour
 
     public void StartGame()
     {
+        if (startingGame || SceneTransitionFader.IsTransitioning) return;
+        startingGame = true;
+        if (startButton != null) startButton.interactable = false;
+
         if (GameSession.Instance != null && GameSession.Instance.SelectedArena == null
             && mapSelectController != null)
         {
             mapSelectController.SelectDefaultIfNone();
         }
-        SceneManager.LoadScene(gameSceneName);
+        SceneTransitionFader.Instance.FadeToScene(gameSceneName);
     }
 
     public void Quit()
