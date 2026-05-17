@@ -1,3 +1,4 @@
+using System.Collections;
 using TMPro;
 using UnityEngine;
 
@@ -58,6 +59,10 @@ public abstract class PlayerBase : MonoBehaviour
 
     CircleCollider2D    circleCol;
     BuffVisual          buffVisual;
+    SpriteRenderer      ballSprite;
+    Transform           ballVisualTransform;
+    Vector3             ballVisualBaseScale = Vector3.one;
+    Coroutine           impactSquashCoroutine;
     PickupBuff          activeBuffs = PickupBuff.None;
     float speedTimer;
     float heavyTimer;
@@ -104,6 +109,13 @@ public abstract class PlayerBase : MonoBehaviour
         rb.gravityScale  = 0f;
         rb.linearDamping = 0.8f;
         circleCol = GetComponent<CircleCollider2D>();
+        ballSprite = BallVisualUtility.EnsureChildSpriteRenderer(gameObject);
+        if (ballSprite != null)
+        {
+            ballVisualTransform = ballSprite.transform;
+            ballVisualBaseScale = ballVisualTransform.localScale;
+        }
+
         var bouncy = Resources.Load<PhysicsMaterial2D>("Bouncy");
         if (bouncy != null) circleCol.sharedMaterial = bouncy;
         EnsureLayersInited();
@@ -113,6 +125,9 @@ public abstract class PlayerBase : MonoBehaviour
 
         buffVisual = GetComponent<BuffVisual>();
         if (buffVisual == null) buffVisual = gameObject.AddComponent<BuffVisual>();
+
+        if (GetComponent<BallIdentityVisual>() == null)
+            gameObject.AddComponent<BallIdentityVisual>();
     }
 
     protected virtual void Start()
@@ -122,7 +137,8 @@ public abstract class PlayerBase : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
-        if (GameFeel.Instance != null) GameFeel.Instance.PlayDeath();
+        if (GameFeel.Instance != null)
+            GameFeel.Instance.PlayDeath(transform.position, GetBallAccentColor());
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxDeath);
         MatchManager.UnregisterPlayer(this);
@@ -205,7 +221,7 @@ public abstract class PlayerBase : MonoBehaviour
             float falloff = 1f - Mathf.Clamp01(dist / shockwaveRadius);
             h.attachedRigidbody.AddForce(toward.normalized * (shockwaveForce * falloff), ForceMode2D.Impulse);
         }
-        if (GameFeel.Instance != null) GameFeel.Instance.PlayImpact(origin, shockwaveForce);
+        if (GameFeel.Instance != null) GameFeel.Instance.PlayImpact(origin, shockwaveForce, GetBallAccentColor());
         if (AudioManager.Instance != null)
             AudioManager.Instance.PlaySfx(AudioManager.Instance.sfxImpactHard, 1f);
     }
@@ -228,8 +244,21 @@ public abstract class PlayerBase : MonoBehaviour
         if (AudioManager.Instance != null) AudioManager.Instance.PlayImpact(rv);
         if (GameFeel.Instance != null)
         {
-            var pt = col.GetContact(0).point;
-            GameFeel.Instance.PlayImpact(pt, rv);
+            Vector2 pt = col.contactCount > 0 ? col.GetContact(0).point : (Vector2)transform.position;
+            GameFeel.Instance.PlayImpact(pt, rv, GetBallAccentColor());
+        }
+        PlayImpactSquash(rv);
+    }
+
+    public float GetBuffRemaining(PickupBuff buff)
+    {
+        switch (buff)
+        {
+            case PickupBuff.Speed:      return (activeBuffs & PickupBuff.Speed) != 0 ? Mathf.Max(0f, speedTimer) : 0f;
+            case PickupBuff.Heavy:      return (activeBuffs & PickupBuff.Heavy) != 0 ? Mathf.Max(0f, heavyTimer) : 0f;
+            case PickupBuff.Reverse:    return (activeBuffs & PickupBuff.Reverse) != 0 ? Mathf.Max(0f, reverseTimer) : 0f;
+            case PickupBuff.Invincible: return (activeBuffs & PickupBuff.Invincible) != 0 ? Mathf.Max(0f, invincibleTimer) : 0f;
+            default:                    return 0f;
         }
     }
 
@@ -278,5 +307,43 @@ public abstract class PlayerBase : MonoBehaviour
         currentAccel = accel;
         if (rb != null) rb.mass = mass;
         transform.localScale   = scale;
+    }
+
+    Color GetBallAccentColor()
+    {
+        if (ballSprite != null) return ballSprite.color;
+        return BallVisualUtility.AccentColor(gameObject);
+    }
+
+    void PlayImpactSquash(float relativeVelocity)
+    {
+        if (ballVisualTransform == null) return;
+
+        float strength = Mathf.Clamp01(relativeVelocity / 12f);
+        if (strength <= 0.03f) return;
+
+        if (impactSquashCoroutine != null) StopCoroutine(impactSquashCoroutine);
+        impactSquashCoroutine = StartCoroutine(ImpactSquashRoutine(strength));
+    }
+
+    IEnumerator ImpactSquashRoutine(float strength)
+    {
+        const float dur = 0.16f;
+        float t = 0f;
+        while (t < dur)
+        {
+            t += Time.deltaTime;
+            float k = Mathf.Clamp01(t / dur);
+            float wave = Mathf.Sin(k * Mathf.PI);
+            ballVisualTransform.localScale = new Vector3(
+                ballVisualBaseScale.x * (1f + 0.16f * strength * wave),
+                ballVisualBaseScale.y * (1f - 0.1f * strength * wave),
+                ballVisualBaseScale.z
+            );
+            yield return null;
+        }
+
+        ballVisualTransform.localScale = ballVisualBaseScale;
+        impactSquashCoroutine = null;
     }
 }

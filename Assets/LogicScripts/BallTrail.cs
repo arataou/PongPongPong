@@ -17,7 +17,7 @@ public class BallTrail : MonoBehaviour
     void Awake()
     {
         player = GetComponent<PlayerBase>();
-        sprite = GetComponentInChildren<SpriteRenderer>();
+        sprite = BallVisualUtility.EnsureChildSpriteRenderer(gameObject);
 
         trail = GetComponent<TrailRenderer>();
         if (trail == null) trail = gameObject.AddComponent<TrailRenderer>();

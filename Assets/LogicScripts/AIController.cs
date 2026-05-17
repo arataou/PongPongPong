@@ -11,6 +11,10 @@ public class AIController : MonoBehaviour
 
     void Awake()
     {
+        BallVisualUtility.EnsureChildSpriteRenderer(gameObject);
+        if (GetComponent<AIDangerVisual>() == null)
+            gameObject.AddComponent<AIDangerVisual>();
+
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale  = 0f;
         rb.linearDamping = 0.8f;

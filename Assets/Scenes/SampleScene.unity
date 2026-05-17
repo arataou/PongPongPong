@@ -1665,6 +1665,8 @@ MonoBehaviour:
   pickupScale: 0.7
   pickupRadius: 0.35
   edgePadding: 0.5
+  spawnCueLeadTime: 0.45
+  spawnCueScale: 1.35
 --- !u!1 &1077845360
 GameObject:
   m_ObjectHideFlags: 0
@@ -8599,6 +8601,11 @@ MonoBehaviour:
   warningThreshold: 3
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   warningColor: {r: 1, g: 0, b: 0, a: 1}
+  speedIcon: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814302, type: 3}
+  heavyIcon: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814303, type: 3}
+  reverseIcon: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814304, type: 3}
+  invincibleIcon: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814305, type: 3}
+  shockwaveIcon: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814306, type: 3}
 --- !u!4 &1893617278
 Transform:
   m_ObjectHideFlags: 0

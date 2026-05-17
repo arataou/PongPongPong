@@ -29,7 +29,7 @@ public class BuffVisual : MonoBehaviour
     {
         player    = GetComponent<PlayerBase>();
         circleCol = GetComponent<CircleCollider2D>();
-        ballSprite = GetComponentInChildren<SpriteRenderer>();
+        ballSprite = BallVisualUtility.EnsureChildSpriteRenderer(gameObject);
         if (ballSprite != null)
         {
             spriteTransform     = ballSprite.transform;
