@@ -6,6 +6,11 @@ public class BuffPickupSpawner : MonoBehaviour
     [SerializeField] float  spawnInterval = 5f;
     [SerializeField] int    maxOnField    = 3;
     [SerializeField] Sprite pickupSprite;
+    [SerializeField] Sprite speedSprite;
+    [SerializeField] Sprite heavySprite;
+    [SerializeField] Sprite reverseSprite;
+    [SerializeField] Sprite invincibleSprite;
+    [SerializeField] Sprite shockwaveSprite;
     [SerializeField] Color  pickupColor   = new Color(0.9f, 0.9f, 0.95f, 1f);
     [SerializeField] float  pickupScale   = 0.7f;
     [SerializeField] float  pickupRadius  = 0.35f;
@@ -56,11 +61,12 @@ public class BuffPickupSpawner : MonoBehaviour
         go.transform.localScale = Vector3.one * pickupScale;
 
         var buffType = BuffPool[Random.Range(0, BuffPool.Length)];
+        var sprite = SpriteFor(buffType);
 
         var sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite       = pickupSprite;
+        sr.sprite       = sprite != null ? sprite : pickupSprite;
         sr.sortingOrder = 0;
-        sr.color        = ColorFor(buffType);
+        sr.color        = sprite != null ? Color.white : ColorFor(buffType);
 
         var col = go.AddComponent<CircleCollider2D>();
         col.isTrigger = true;
@@ -82,6 +88,19 @@ public class BuffPickupSpawner : MonoBehaviour
             case PickupBuff.Invincible: return new Color(1f,   0.85f, 0.3f, 1f);
             case PickupBuff.Shockwave:  return new Color(1f,   0.45f, 0.2f, 1f);
             default:                    return pickupColor;
+        }
+    }
+
+    Sprite SpriteFor(PickupBuff b)
+    {
+        switch (b)
+        {
+            case PickupBuff.Speed:      return speedSprite;
+            case PickupBuff.Heavy:      return heavySprite;
+            case PickupBuff.Reverse:    return reverseSprite;
+            case PickupBuff.Invincible: return invincibleSprite;
+            case PickupBuff.Shockwave:  return shockwaveSprite;
+            default:                    return null;
         }
     }
 

@@ -1656,6 +1656,11 @@ MonoBehaviour:
   spawnInterval: 5
   maxOnField: 3
   pickupSprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  speedSprite: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814302, type: 3}
+  heavySprite: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814303, type: 3}
+  reverseSprite: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814304, type: 3}
+  invincibleSprite: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814305, type: 3}
+  shockwaveSprite: {fileID: 21300000, guid: 7a3e5d050a6242caa923bb7c5d814306, type: 3}
   pickupColor: {r: 0.9, g: 0.9, b: 0.95, a: 1}
   pickupScale: 0.7
   pickupRadius: 0.35
