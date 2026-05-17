@@ -44,6 +44,8 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float shockwaveMassPenalty = 0.1f;
     [Tooltip("击退速度倍率下限 (即使巨重球也至少能弹这么多).")]
     [SerializeField] float shockwaveMinMul = 0.2f;
+    [Tooltip("对 AI 的额外加成: 速度倍率 (在 peakSpeed 基础上再乘). 跳过质量惩罚.")]
+    [SerializeField] float shockwaveAiSpeedMul = 2.5f;
 
     [Header("Visual (optional)")]
     [Tooltip("Child GameObject shown only while in Fast state (the bright outline ring).")]
@@ -265,10 +267,20 @@ public abstract class PlayerBase : MonoBehaviour
             if (dist < 0.001f) continue;
             float falloff = 1f - Mathf.Clamp01(dist / shockwaveRadius);
             // 直接给速度增量(不走 Impulse, 否则被质量除掉, 重球弹不动)
-            // 质量惩罚走线性: 每多 1 mass 减 shockwaveMassPenalty, 下限 shockwaveMinMul
-            float mass = h.attachedRigidbody.mass;
-            float massMul = Mathf.Clamp(1f - shockwaveMassPenalty * (mass - 1f), shockwaveMinMul, 1f);
-            h.attachedRigidbody.linearVelocity += toward.normalized * (shockwavePeakSpeed * falloff * massMul);
+            float speed;
+            if (h.GetComponent<AIController>() != null)
+            {
+                // AI 特殊对待: 跳过质量惩罚 + 额外速度倍率, 让冲击波成为反 AI 大招
+                speed = shockwavePeakSpeed * falloff * shockwaveAiSpeedMul;
+            }
+            else
+            {
+                // 玩家球: 质量惩罚走线性, 每多 1 mass 减 shockwaveMassPenalty, 下限 shockwaveMinMul
+                float mass = h.attachedRigidbody.mass;
+                float massMul = Mathf.Clamp(1f - shockwaveMassPenalty * (mass - 1f), shockwaveMinMul, 1f);
+                speed = shockwavePeakSpeed * falloff * massMul;
+            }
+            h.attachedRigidbody.linearVelocity += toward.normalized * speed;
         }
         if (GameFeel.Instance != null) GameFeel.Instance.PlayImpact(origin, shockwavePeakSpeed, GetBallAccentColor());
         if (AudioManager.Instance != null)
