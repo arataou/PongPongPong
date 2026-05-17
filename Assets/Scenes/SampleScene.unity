@@ -483,8 +483,10 @@ MonoBehaviour:
   heavyBuffMul: 3
   buffDuration: 5
   invincibleDuration: 3
-  shockwaveRadius: 3
-  shockwaveForce: 12
+  shockwaveRadius: 8
+  shockwavePeakSpeed: 25
+  shockwaveMassPenalty: 0.1
+  shockwaveMinMul: 0.2
   fastStateOutline: {fileID: 0}
   invincibleAura: {fileID: 0}
   chineseFont: {fileID: 0}
@@ -1574,8 +1576,10 @@ MonoBehaviour:
   heavyBuffMul: 3
   buffDuration: 5
   invincibleDuration: 3
-  shockwaveRadius: 3
-  shockwaveForce: 12
+  shockwaveRadius: 8
+  shockwavePeakSpeed: 25
+  shockwaveMassPenalty: 0.1
+  shockwaveMinMul: 0.2
   fastStateOutline: {fileID: 0}
   invincibleAura: {fileID: 0}
   chineseFont: {fileID: 0}
@@ -3051,8 +3055,10 @@ MonoBehaviour:
   heavyBuffMul: 3
   buffDuration: 5
   invincibleDuration: 3
-  shockwaveRadius: 3
-  shockwaveForce: 12
+  shockwaveRadius: 8
+  shockwavePeakSpeed: 25
+  shockwaveMassPenalty: 0.1
+  shockwaveMinMul: 0.2
   fastStateOutline: {fileID: 0}
   invincibleAura: {fileID: 0}
   chineseFont: {fileID: 0}
