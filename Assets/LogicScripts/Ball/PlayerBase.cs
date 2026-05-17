@@ -37,8 +37,8 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float heavyBuffMul       = 3f;
     [SerializeField] float buffDuration       = 5f;
     [SerializeField] float invincibleDuration = 3f;
-    [SerializeField] float shockwaveRadius    = 5.5f;
-    [SerializeField] float shockwaveForce     = 30f;
+    [SerializeField] float shockwaveRadius    = 8f;
+    [SerializeField] float shockwaveForce     = 70f;
 
     [Header("Visual (optional)")]
     [Tooltip("Child GameObject shown only while in Fast state (the bright outline ring).")]
@@ -69,6 +69,7 @@ public abstract class PlayerBase : MonoBehaviour
     float reverseTimer;
     float invincibleTimer;
     float lastImpactTime;
+    readonly System.Collections.Generic.List<Collider2D> invincibleIgnoredCols = new System.Collections.Generic.List<Collider2D>();
 
     public BallState State { get; private set; } = BallState.Normal;
     public bool IsPlayer => true;
@@ -182,6 +183,7 @@ public abstract class PlayerBase : MonoBehaviour
                 activeBuffs &= ~PickupBuff.Invincible;
                 if (invincibleAura != null) invincibleAura.SetActive(false);
                 if (s_playerLayer >= 0) gameObject.layer = s_playerLayer;
+                ClearInvincibleIgnoreCollisions();
             }
         }
         if (changed) RecalcStats();
@@ -202,10 +204,47 @@ public abstract class PlayerBase : MonoBehaviour
             invincibleTimer = invincibleDuration;
             if (invincibleAura != null) invincibleAura.SetActive(true);
             if (s_invinciblePlayerLayer >= 0) gameObject.layer = s_invinciblePlayerLayer;
+            // 保险丝: Layer 矩阵对"未来接触"有效,但 Unity 物理对"当前已接触"的接触点不会立即重算
+            // 显式 IgnoreCollision 一遍场上所有球,把已存在的接触也清掉
+            ApplyInvincibleIgnoreCollisions();
         }
         RecalcStats();
 
         if (buffVisual != null) buffVisual.OnPickup(buff);
+    }
+
+    void ApplyInvincibleIgnoreCollisions()
+    {
+        ClearInvincibleIgnoreCollisions();
+        if (circleCol == null) return;
+
+        var players = MatchManager.AlivePlayers;
+        for (int i = 0; i < players.Count; i++)
+        {
+            var p = players[i];
+            if (p == null || p == this) continue;
+            var c = p.GetComponent<CircleCollider2D>();
+            if (c != null) { Physics2D.IgnoreCollision(circleCol, c, true); invincibleIgnoredCols.Add(c); }
+        }
+        var ais = FindObjectsByType<AIController>(FindObjectsSortMode.None);
+        for (int i = 0; i < ais.Length; i++)
+        {
+            var c = ais[i].GetComponent<CircleCollider2D>();
+            if (c != null) { Physics2D.IgnoreCollision(circleCol, c, true); invincibleIgnoredCols.Add(c); }
+        }
+    }
+
+    void ClearInvincibleIgnoreCollisions()
+    {
+        if (circleCol != null)
+        {
+            for (int i = 0; i < invincibleIgnoredCols.Count; i++)
+            {
+                var c = invincibleIgnoredCols[i];
+                if (c != null) Physics2D.IgnoreCollision(circleCol, c, false);
+            }
+        }
+        invincibleIgnoredCols.Clear();
     }
 
     void TriggerShockwave()
