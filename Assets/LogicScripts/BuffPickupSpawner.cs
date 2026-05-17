@@ -66,6 +66,13 @@ public class BuffPickupSpawner : MonoBehaviour
             return;
         }
 
+        // 状态一致性兜底:flag 说"有预告",但实际 GO 引用没了 → 重置 flag,下一帧重新走
+        if (hasPendingSpawn && spawnCue == null)
+        {
+            hasPendingSpawn = false;
+            ClearSpawnCueReferences();
+        }
+
         timer -= Time.deltaTime;
         if (!hasPendingSpawn && timer <= spawnCueLeadTime)
             PreparePendingSpawn();
@@ -94,6 +101,7 @@ public class BuffPickupSpawner : MonoBehaviour
     void SpawnOne(Vector2 position, PickupBuff buffType)
     {
         var go = new GameObject("BuffPickup");
+        go.transform.SetParent(transform, false);
         go.transform.position   = position;
         go.transform.localScale = Vector3.one * pickupScale;
 
@@ -122,11 +130,13 @@ public class BuffPickupSpawner : MonoBehaviour
         go.name = "BuffPickup";
         go.transform.position = pendingSpawnPosition;
         go.transform.localScale = Vector3.one * pickupScale;
+        if (!go.activeSelf) go.SetActive(true);   // 防御:任何路径意外 SetActive(false) 都强制开
 
         var sprite = SpriteFor(pendingSpawnBuff);
         spawnCueSprite.sprite = sprite != null ? sprite : pickupSprite;
         spawnCueSprite.color = sprite != null ? Color.white : ColorFor(pendingSpawnBuff);
         spawnCueSprite.sortingOrder = PickupSortingOrder;
+        spawnCueSprite.enabled = true;
 
         ConfigurePickupColliderAndBuff(go, pendingSpawnBuff);
         active.Add(go.GetComponent<BuffPickup>());
@@ -160,6 +170,7 @@ public class BuffPickupSpawner : MonoBehaviour
         ClearSpawnCue();
 
         spawnCue = new GameObject("BuffPickupSpawnCue");
+        spawnCue.transform.SetParent(transform, false);   // 绑定到 spawner,生命周期一致
         spawnCue.transform.position = pendingSpawnPosition;
         spawnCue.transform.localScale = Vector3.one * (pickupScale * spawnCueScale);
 
@@ -190,9 +201,39 @@ public class BuffPickupSpawner : MonoBehaviour
 
     void ClearSpawnCue()
     {
+        // 双保险:立即停渲染 + SetActive 让 GO 帧内就消失,不等帧尾 Destroy
         if (spawnCueSprite != null) spawnCueSprite.enabled = false;
-        if (spawnCue != null) Destroy(spawnCue);
+        if (spawnCue != null)
+        {
+            spawnCue.SetActive(false);
+            Destroy(spawnCue);
+        }
         ClearSpawnCueReferences();
+        // 兜底:扫一遍 spawner 子节点里有没有遗留的 SpawnCue(防止某条路径引用断了但 GO 还活着)
+        SweepOrphanSpawnCues();
+    }
+
+    void SweepOrphanSpawnCues()
+    {
+        for (int i = transform.childCount - 1; i >= 0; i--)
+        {
+            var child = transform.GetChild(i);
+            if (child != null && child.name == "BuffPickupSpawnCue")
+            {
+                child.gameObject.SetActive(false);
+                Destroy(child.gameObject);
+            }
+        }
+    }
+
+    void OnDisable()
+    {
+        CancelPendingSpawn();
+    }
+
+    void OnDestroy()
+    {
+        CancelPendingSpawn();
     }
 
     void ClearSpawnCueReferences()
