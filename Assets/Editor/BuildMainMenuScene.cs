@@ -158,8 +158,9 @@ public static class BuildMainMenuScene
         public GameObject coopHintGroup;
         public Button p2Btn, p3Btn;
         public TextMeshProUGUI pcLabel;
+        public GameObject diffRowGo;       // 整个难度行 (PvP 模式自动隐藏)
         public Button easyBtn, normalBtn, hardBtn;
-        public TextMeshProUGUI diffLabel, diffProfile;
+        public TextMeshProUGUI diffLabel;
         public RectTransform mapListRoot;
         public Image mapPreviewImg;
         public TextMeshProUGUI mapPreviewName;
@@ -191,8 +192,10 @@ public static class BuildMainMenuScene
         modeLblRt.sizeDelta = new Vector2(0, 30);
         d.modeLabel.alignment = TextAlignmentOptions.Center;
 
-        d.pvpBtn  = CreateButton("PvPButton",  modeRow.transform, "对战", 26, new Vector2(160, 60), new Vector2(-90, -60));
-        d.coopBtn = CreateButton("CoopButton", modeRow.transform, "合作", 26, new Vector2(160, 60), new Vector2( 90, -60));
+        d.pvpBtn  = CreateButton("PvPButton",  modeRow.transform, "对战", 26, new Vector2(160, 60), new Vector2(0, 0));
+        d.coopBtn = CreateButton("CoopButton", modeRow.transform, "合作", 26, new Vector2(160, 60), new Vector2(0, 0));
+        AnchorBottomRow(d.pvpBtn.transform,  -100, 70);
+        AnchorBottomRow(d.coopBtn.transform, +100, 70);
 
         d.coopHintGroup = CreateRect("CoopHint", modeRow.transform);
         var hintRt = (RectTransform)d.coopHintGroup.transform;
@@ -213,11 +216,14 @@ public static class BuildMainMenuScene
         pcLblRt.sizeDelta = new Vector2(0, 30);
         d.pcLabel.alignment = TextAlignmentOptions.Center;
 
-        d.p2Btn = CreateButton("TwoPlayerButton",   pcRow.transform, "2 人", 26, new Vector2(160, 60), new Vector2(-90, -60));
-        d.p3Btn = CreateButton("ThreePlayerButton", pcRow.transform, "3 人", 26, new Vector2(160, 60), new Vector2( 90, -60));
+        d.p2Btn = CreateButton("TwoPlayerButton",   pcRow.transform, "2 人", 26, new Vector2(160, 60), new Vector2(0, 0));
+        d.p3Btn = CreateButton("ThreePlayerButton", pcRow.transform, "3 人", 26, new Vector2(160, 60), new Vector2(0, 0));
+        AnchorBottomRow(d.p2Btn.transform, -100, 40);
+        AnchorBottomRow(d.p3Btn.transform, +100, 40);
 
-        // DifficultyRow
-        var diffRow = CreatePanelSection("DifficultyRow", leftCol.transform, 2, "AI 难度");
+        // DifficultyRow (PvP 模式会被 GameModeSelector 整行隐藏, 只有 COOP 才看得见)
+        var diffRow = CreatePanelSection("DifficultyRow", leftCol.transform, 2, "AI 难度 (合作)");
+        d.diffRowGo = diffRow;
         d.diffLabel = CreateTmp("CurrentLabel", diffRow.transform, "难度: 普通", 24, CSubText).GetComponent<TextMeshProUGUI>();
         var dlRt = (RectTransform)d.diffLabel.transform;
         dlRt.anchorMin = new Vector2(0, 1); dlRt.anchorMax = new Vector2(1, 1);
@@ -225,16 +231,13 @@ public static class BuildMainMenuScene
         dlRt.sizeDelta = new Vector2(0, 30);
         d.diffLabel.alignment = TextAlignmentOptions.Center;
 
-        d.easyBtn   = CreateButton("EasyButton",   diffRow.transform, "菜",   22, new Vector2(120, 50), new Vector2(-150, -55));
-        d.normalBtn = CreateButton("NormalButton", diffRow.transform, "普通", 22, new Vector2(120, 50), new Vector2(   0, -55));
-        d.hardBtn   = CreateButton("HardButton",   diffRow.transform, "变态", 22, new Vector2(120, 50), new Vector2( 150, -55));
-
-        d.diffProfile = CreateTmp("ProfilePreview", diffRow.transform, "首 AI: 60s · 间隔: 10s\nAI 速度: x1.0 · AI 质量: x1.0", 16, CSubText).GetComponent<TextMeshProUGUI>();
-        var dpRt = (RectTransform)d.diffProfile.transform;
-        dpRt.anchorMin = new Vector2(0, 0); dpRt.anchorMax = new Vector2(1, 0);
-        dpRt.pivot = new Vector2(0.5f, 0); dpRt.anchoredPosition = new Vector2(0, 5);
-        dpRt.sizeDelta = new Vector2(0, 50);
-        d.diffProfile.alignment = TextAlignmentOptions.Center;
+        // 按钮放到 panel 底部 +30 ~ +80 区域 (anchor bottom, pivot 0), 不再和 ProfilePreview 挤
+        d.easyBtn   = CreateButton("EasyButton",   diffRow.transform, "菜",   22, new Vector2(120, 50), new Vector2(0, 0));
+        d.normalBtn = CreateButton("NormalButton", diffRow.transform, "普通", 22, new Vector2(120, 50), new Vector2(0, 0));
+        d.hardBtn   = CreateButton("HardButton",   diffRow.transform, "变态", 22, new Vector2(120, 50), new Vector2(0, 0));
+        AnchorBottomRow(d.easyBtn.transform,   -160, 30);
+        AnchorBottomRow(d.normalBtn.transform,    0, 30);
+        AnchorBottomRow(d.hardBtn.transform,   +160, 30);
 
         // ---- 右侧:地图选择 + 按钮列
         var rightCol = CreateRect("RightColumn", d.panel.transform);
@@ -311,6 +314,15 @@ public static class BuildMainMenuScene
         d.quitBtn     = CreateMenuButton("QuitButton",     btnCol.transform, "退出",       24, CWhite);
 
         return d;
+    }
+
+    static void AnchorBottomRow(Transform t, float x, float yFromBottom)
+    {
+        var rt = (RectTransform)t;
+        rt.anchorMin = new Vector2(0.5f, 0);
+        rt.anchorMax = new Vector2(0.5f, 0);
+        rt.pivot = new Vector2(0.5f, 0);
+        rt.anchoredPosition = new Vector2(x, yFromBottom);
     }
 
     static GameObject CreatePanelSection(string name, Transform parent, int row, string title)
@@ -622,6 +634,7 @@ public static class BuildMainMenuScene
         so.FindProperty("coopButton").objectReferenceValue = m.coopBtn;
         so.FindProperty("currentLabel").objectReferenceValue = m.modeLabel;
         so.FindProperty("coopHintGroup").objectReferenceValue = m.coopHintGroup;
+        so.FindProperty("difficultyGroup").objectReferenceValue = m.diffRowGo;
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
@@ -641,7 +654,7 @@ public static class BuildMainMenuScene
         so.FindProperty("normalButton").objectReferenceValue   = m.normalBtn;
         so.FindProperty("hardButton").objectReferenceValue     = m.hardBtn;
         so.FindProperty("currentLabel").objectReferenceValue   = m.diffLabel;
-        so.FindProperty("profilePreview").objectReferenceValue = m.diffProfile;
+        // profilePreview 已从 UI 移除, 不再接线 (字段保留在脚本里, 留空即可)
         so.ApplyModifiedPropertiesWithoutUndo();
     }
 
