@@ -44,8 +44,8 @@ public abstract class PlayerBase : MonoBehaviour
     [SerializeField] float shockwaveMassPenalty = 0.1f;
     [Tooltip("击退速度倍率下限 (即使巨重球也至少能弹这么多).")]
     [SerializeField] float shockwaveMinMul = 0.2f;
-    [Tooltip("对 AI 的额外加成: 速度倍率 (在 peakSpeed 基础上再乘). 跳过质量惩罚.")]
-    [SerializeField] float shockwaveAiSpeedMul = 2.5f;
+    [Tooltip("对 AI 的速度倍率 (在 peakSpeed 基础上再乘). 跳过质量惩罚. 0.7 时贴脸约弹半个地图(~8 单位).")]
+    [SerializeField] float shockwaveAiSpeedMul = 0.7f;
 
     [Header("Visual (optional)")]
     [Tooltip("Child GameObject shown only while in Fast state (the bright outline ring).")]

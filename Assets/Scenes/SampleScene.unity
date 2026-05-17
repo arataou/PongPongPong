@@ -487,7 +487,7 @@ MonoBehaviour:
   shockwavePeakSpeed: 35
   shockwaveMassPenalty: 0.1
   shockwaveMinMul: 0.2
-  shockwaveAiSpeedMul: 2.5
+  shockwaveAiSpeedMul: 0.7
   fastStateOutline: {fileID: 0}
   invincibleAura: {fileID: 0}
   chineseFont: {fileID: 0}
@@ -1581,7 +1581,7 @@ MonoBehaviour:
   shockwavePeakSpeed: 35
   shockwaveMassPenalty: 0.1
   shockwaveMinMul: 0.2
-  shockwaveAiSpeedMul: 2.5
+  shockwaveAiSpeedMul: 0.7
   fastStateOutline: {fileID: 0}
   invincibleAura: {fileID: 0}
   chineseFont: {fileID: 0}
@@ -3061,7 +3061,7 @@ MonoBehaviour:
   shockwavePeakSpeed: 35
   shockwaveMassPenalty: 0.1
   shockwaveMinMul: 0.2
-  shockwaveAiSpeedMul: 2.5
+  shockwaveAiSpeedMul: 0.7
   fastStateOutline: {fileID: 0}
   invincibleAura: {fileID: 0}
   chineseFont: {fileID: 0}
