@@ -1,37 +1,7 @@
 fileFormatVersion: 2
 guid: ebff181b1e0cd944a8abb166996e88c4
 TextureImporter:
-  internalIDToNameTable:
-  - first:
-      213: -5547680062357475024
-    second: HandDrawnInkDashLine_0
-  - first:
-      213: -1937032537285356747
-    second: HandDrawnInkDashLine_1
-  - first:
-      213: 6361055897223204274
-    second: HandDrawnInkDashLine_2
-  - first:
-      213: 5007157808015082093
-    second: HandDrawnInkDashLine_3
-  - first:
-      213: 7224234153343963906
-    second: HandDrawnInkDashLine_4
-  - first:
-      213: 2896486404337914679
-    second: HandDrawnInkDashLine_5
-  - first:
-      213: 4514674928811567043
-    second: HandDrawnInkDashLine_6
-  - first:
-      213: 587393722108836415
-    second: HandDrawnInkDashLine_7
-  - first:
-      213: -1353180321679380256
-    second: HandDrawnInkDashLine_8
-  - first:
-      213: -6120146151498925104
-    second: HandDrawnInkDashLine_9
+  internalIDToNameTable: []
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -73,14 +43,14 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 128
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -125,232 +95,12 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_0
-      rect:
-        serializedVersion: 2
-        x: 10
-        y: 24
-        width: 177
-        height: 30
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0317aab406ea203b0800000000000000
-      internalID: -5547680062357475024
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_1
-      rect:
-        serializedVersion: 2
-        x: 266
-        y: 25
-        width: 148
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 5339bb09b274e15e0800000000000000
-      internalID: -1937032537285356747
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_2
-      rect:
-        serializedVersion: 2
-        x: 480
-        y: 25
-        width: 101
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 2bd846ed2a2074850800000000000000
-      internalID: 6361055897223204274
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_3
-      rect:
-        serializedVersion: 2
-        x: 651
-        y: 23
-        width: 146
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: d6200115f7ffc7540800000000000000
-      internalID: 5007157808015082093
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_4
-      rect:
-        serializedVersion: 2
-        x: 832
-        y: 26
-        width: 180
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 203df44dfa2a14460800000000000000
-      internalID: 7224234153343963906
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_5
-      rect:
-        serializedVersion: 2
-        x: 1066
-        y: 24
-        width: 149
-        height: 30
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 7335f4bd903623820800000000000000
-      internalID: 2896486404337914679
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_6
-      rect:
-        serializedVersion: 2
-        x: 1258
-        y: 30
-        width: 111
-        height: 25
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 3c7ec209de857ae30800000000000000
-      internalID: 4514674928811567043
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_7
-      rect:
-        serializedVersion: 2
-        x: 1433
-        y: 25
-        width: 152
-        height: 26
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: f3a77956a77d62800800000000000000
-      internalID: 587393722108836415
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_8
-      rect:
-        serializedVersion: 2
-        x: 1646
-        y: 25
-        width: 152
-        height: 29
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0e07049baa9883de0800000000000000
-      internalID: -1353180321679380256
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: HandDrawnInkDashLine_9
-      rect:
-        serializedVersion: 2
-        x: 1875
-        y: 27
-        width: 160
-        height: 28
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: 0dbbe6a408fd01ba0800000000000000
-      internalID: -6120146151498925104
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: a62edba5e7ef94c20800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -359,17 +109,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      HandDrawnInkDashLine_0: -5547680062357475024
-      HandDrawnInkDashLine_1: -1937032537285356747
-      HandDrawnInkDashLine_2: 6361055897223204274
-      HandDrawnInkDashLine_3: 5007157808015082093
-      HandDrawnInkDashLine_4: 7224234153343963906
-      HandDrawnInkDashLine_5: 2896486404337914679
-      HandDrawnInkDashLine_6: 4514674928811567043
-      HandDrawnInkDashLine_7: 587393722108836415
-      HandDrawnInkDashLine_8: -1353180321679380256
-      HandDrawnInkDashLine_9: -6120146151498925104
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
