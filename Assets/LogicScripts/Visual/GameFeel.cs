@@ -100,7 +100,9 @@ public class GameFeel : MonoBehaviour
 
     IEnumerator ImpactRingRoutine(Vector2 worldPos, float relativeVelocity, Color accentColor, float maxRadius, float width, float dur)
     {
+        if (this == null) yield break;  // GameFeel 已被销毁 (场景关闭路径), 不再 spawn 顶层 GO
         var go = new GameObject("ImpactRingFX");
+        go.transform.SetParent(transform, false);  // 跟 GameFeel 生命周期一致, 场景关闭时自动跟随销毁
         go.transform.position = worldPos;
 
         var lr = go.AddComponent<LineRenderer>();
