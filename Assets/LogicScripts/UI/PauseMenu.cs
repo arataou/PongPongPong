@@ -8,6 +8,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] Button     resumeButton;
     [SerializeField] Button     restartButton;
     [SerializeField] Button     quitButton;
+    [SerializeField] string     mainMenuSceneName = "MainMenu";
 
     bool paused;
 
@@ -56,10 +57,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Quit()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 }
