@@ -165,7 +165,7 @@ public class BuffVisual : MonoBehaviour
         lr.sortingOrder  = 4;
 
         const float dur = 0.5f;
-        const float maxRadius = 13f;
+        const float maxRadius = 10f;
         float t = 0f;
         while (t < dur)
         {
