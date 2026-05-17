@@ -25,8 +25,6 @@ public class BoundsKiller : MonoBehaviour
 
         if (fullyOutLeft || fullyOutRight || fullyOutBottom || fullyOutTop)
         {
-            var pb = GetComponent<PlayerBase>();
-            if (pb != null && pb.IsInvincible) return;
             Destroy(gameObject);
         }
     }
