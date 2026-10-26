@@ -1,5 +1,7 @@
 # 美术资源接入清单(给美术 + Codex / GPT-5.5)
 
+> 历史参考（2026-10-26 核对）：本文保留早期设计、参数与接线步骤，不代表当前完成度。现状见[项目进度](项目进度报告.md)与[架构说明](../ARCHITECTURE.md)。旧菜单生成工具会覆盖当前布局；当前菜单无选图入口。
+
 > **本文档用法**
 > - **美术**:从头到尾通读一遍,跟着 §3 的清单准备资源,然后按 §4 在 Unity 里挂。
 > - **Codex**:本文档可直接整篇贴给 Codex。它能帮你:回答字段名/路径/规格问题,生成命名建议,解释代码字段含义。**但 Unity Inspector 拖资源的物理操作只能美术在 Unity 里做** — Codex 看不到 Unity 编辑器。
@@ -10,7 +12,7 @@
 
 ## 1. 项目背景(Codex 必读)
 
-**项目名**:碰碰球 (PongPongPong) — Unity 2D 期中作业
+**项目名**:碰碰球 (PongPongPong) — Unity 2D 物理推挤游戏
 **类型**:本地 2~3 人 PvP 物理推挤 + PvE 合作生存
 **项目根目录**:`D:\Unity Projects\PongPongPong`
 **Unity 版本**:Unity 6+(脚本用 `FindFirstObjectByType`)
