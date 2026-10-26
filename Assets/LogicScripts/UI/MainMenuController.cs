@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -13,14 +14,17 @@ public class MainMenuController : MonoBehaviour
     [SerializeField] Button settingsButton;
     [SerializeField] Button historyButton;
     [SerializeField] Button quitButton;
+    [SerializeField] Button playButton;
+    [SerializeField] Button setupBackButton;
 
     [Header("Panels")]
     [SerializeField] GameObject mainPanel;
+    [SerializeField] GameObject matchSetupPanel;
     [SerializeField] GameObject howToPlayPanel;
     [SerializeField] GameObject settingsPanel;
     [SerializeField] GameObject historyPanel;
 
-    [Header("Selectors (always visible on main panel)")]
+    [Header("Selectors")]
     [SerializeField] PlayerCountSelector playerCountSelector;
     [SerializeField] MapSelectController mapSelectController;
 
@@ -30,11 +34,13 @@ public class MainMenuController : MonoBehaviour
     {
         GameSession.Ensure();
 
-        if (startButton      != null) startButton.onClick.AddListener(StartGame);
+        if (startButton      != null) startButton.onClick.AddListener(OpenMatchSetup);
         if (howToPlayButton  != null) howToPlayButton.onClick.AddListener(OpenHowToPlay);
         if (settingsButton   != null) settingsButton.onClick.AddListener(OpenSettings);
         if (historyButton    != null) historyButton.onClick.AddListener(OpenHistory);
         if (quitButton       != null) quitButton.onClick.AddListener(Quit);
+        if (playButton       != null) playButton.onClick.AddListener(StartGame);
+        if (setupBackButton  != null) setupBackButton.onClick.AddListener(ShowMain);
 
         ShowMain();
 
@@ -43,41 +49,54 @@ public class MainMenuController : MonoBehaviour
 
     public void ShowMain()
     {
-        SetActive(mainPanel,       true);
-        SetActive(howToPlayPanel,  false);
-        SetActive(settingsPanel,   false);
-        SetActive(historyPanel,    false);
+        ShowPanel(mainPanel, startButton);
+    }
+
+    public void OpenMatchSetup()
+    {
+        // Retain support for scenes made with the original menu builder.
+        if (matchSetupPanel == null) { StartGame(); return; }
+        ShowPanel(matchSetupPanel, playButton);
     }
 
     public void OpenHowToPlay()
     {
-        SetActive(mainPanel,       false);
-        SetActive(howToPlayPanel,  true);
-        SetActive(settingsPanel,   false);
-        SetActive(historyPanel,    false);
+        ShowPanel(howToPlayPanel);
     }
 
     public void OpenSettings()
     {
-        SetActive(mainPanel,       false);
-        SetActive(howToPlayPanel,  false);
-        SetActive(settingsPanel,   true);
-        SetActive(historyPanel,    false);
+        ShowPanel(settingsPanel);
     }
 
     public void OpenHistory()
     {
-        SetActive(mainPanel,       false);
-        SetActive(howToPlayPanel,  false);
-        SetActive(settingsPanel,   false);
-        SetActive(historyPanel,    true);
+        ShowPanel(historyPanel);
+    }
+
+    void ShowPanel(GameObject panel, Button focus = null)
+    {
+        SetActive(mainPanel, panel == mainPanel);
+        SetActive(matchSetupPanel, panel == matchSetupPanel);
+        SetActive(howToPlayPanel, panel == howToPlayPanel);
+        SetActive(settingsPanel, panel == settingsPanel);
+        SetActive(historyPanel, panel == historyPanel);
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(focus != null ? focus.gameObject : null);
+    }
+
+    void Update()
+    {
+        if (matchSetupPanel != null && matchSetupPanel.activeSelf &&
+            Input.GetKeyDown(KeyCode.Escape)) ShowMain();
     }
 
     public void StartGame()
     {
         if (startingGame || SceneTransitionFader.IsTransitioning) return;
         startingGame = true;
-        if (startButton != null) startButton.interactable = false;
+        if (playButton != null) playButton.interactable = false;
+        else if (startButton != null) startButton.interactable = false;
 
         if (GameSession.Instance != null && GameSession.Instance.SelectedArena == null
             && mapSelectController != null)
