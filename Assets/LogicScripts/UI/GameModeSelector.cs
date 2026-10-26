@@ -41,8 +41,6 @@ public class GameModeSelector : MonoBehaviour
 
     void Paint(Button btn, bool selected)
     {
-        if (btn == null) return;
-        var img = btn.GetComponent<Image>();
-        if (img != null) img.color = selected ? selectedColor : unselectedColor;
+        MenuButtonAppearance.Paint(btn, selected, selectedColor, unselectedColor);
     }
 }

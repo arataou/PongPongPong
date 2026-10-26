@@ -14,3 +14,6 @@
 
 # Claude Code project metadata
 .claude/
+
+# Local gameplay recording exceeds GitHub's per-file size limit.
+/Docs/截图/游戏录制.mp4
